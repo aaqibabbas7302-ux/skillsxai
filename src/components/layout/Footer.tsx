@@ -74,17 +74,17 @@ export default function Footer() {
             
             {/* Contact Info */}
             <div className="space-y-3">
-              <a href="mailto:hello@skillsxai.com" className="flex items-center gap-3 text-gray-400 hover:text-primary-400 transition-colors">
+              <a href="mailto:info@skillsxai.com" className="flex items-center gap-3 text-gray-400 hover:text-primary-400 transition-colors">
                 <Mail className="w-5 h-5" />
-                <span>hello@skillsxai.com</span>
+                <span>info@skillsxai.com</span>
               </a>
-              <a href="tel:+1234567890" className="flex items-center gap-3 text-gray-400 hover:text-primary-400 transition-colors">
+              <a href="tel:+918285347868" className="flex items-center gap-3 text-gray-400 hover:text-primary-400 transition-colors">
                 <Phone className="w-5 h-5" />
-                <span>+1 (234) 567-890</span>
+                <span>+91 8285347868</span>
               </a>
-              <div className="flex items-center gap-3 text-gray-400">
-                <MapPin className="w-5 h-5" />
-                <span>123 Innovation Street, Tech City</span>
+              <div className="flex items-start gap-3 text-gray-400">
+                <MapPin className="w-5 h-5 flex-shrink-0 mt-1" />
+                <span>Plot 28, Sheesham Courtyard, Sainik Farm, New Delhi 110030</span>
               </div>
             </div>
           </div>

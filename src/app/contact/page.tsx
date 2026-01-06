@@ -23,22 +23,22 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email Us',
-    value: 'hello@skillsxai.com',
-    link: 'mailto:hello@skillsxai.com',
+    value: 'info@skillsxai.com',
+    link: 'mailto:info@skillsxai.com',
     description: 'We respond within 24 hours',
   },
   {
     icon: Phone,
     title: 'Call Us',
-    value: '+1 (234) 567-890',
-    link: 'tel:+1234567890',
+    value: '+91 8285347868',
+    link: 'tel:+918285347868',
     description: 'Mon-Fri, 9am-6pm IST',
   },
   {
     icon: MapPin,
     title: 'Visit Us',
-    value: '123 Innovation Street, Tech City',
-    link: '#',
+    value: 'Plot 28, Sheesham Courtyard, Sainik Farm, New Delhi 110030',
+    link: 'https://maps.google.com/?q=Plot+28+Sheesham+Courtyard+Sainik+Farm+New+Delhi',
     description: 'By appointment only',
   },
 ]
@@ -466,11 +466,11 @@ export default function ContactPage() {
               Let&apos;s work together to prepare the next generation for an AI-powered world.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a href="mailto:hello@skillsxai.com" className="btn-primary flex items-center gap-2">
+              <a href="mailto:info@skillsxai.com" className="btn-primary flex items-center gap-2">
                 <Mail className="w-5 h-5" />
                 Email Us Directly
               </a>
-              <a href="tel:+1234567890" className="btn-secondary flex items-center gap-2">
+              <a href="tel:+918285347868" className="btn-secondary flex items-center gap-2">
                 <Phone className="w-5 h-5" />
                 Schedule a Call
               </a>
