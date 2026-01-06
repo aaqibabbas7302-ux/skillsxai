@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import { 
   Mail, 
   Phone, 
@@ -111,22 +111,27 @@ export default function ContactPage() {
     setIsSubmitting(true)
     
     try {
-      // Save to Supabase
-      const { error } = await supabase
-        .from('contacts')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || null,
-          organization: formData.organization || null,
-          inquiry_type: formData.inquiryType,
-          message: formData.message,
-          status: 'new'
-        })
+      // Create Supabase client on demand
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       
-      if (error) {
-        console.error('Error saving contact:', error)
-        // Still show success to user, log error for debugging
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        const { error } = await supabase
+          .from('contacts')
+          .insert({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone || null,
+            organization: formData.organization || null,
+            inquiry_type: formData.inquiryType,
+            message: formData.message,
+            status: 'new'
+          })
+        
+        if (error) {
+          console.error('Error saving contact:', error)
+        }
       }
       
       setIsSubmitted(true)
