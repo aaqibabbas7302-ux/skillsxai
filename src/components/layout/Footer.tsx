@@ -15,24 +15,23 @@ import {
 } from 'lucide-react'
 
 const footerLinks = {
-  product: [
-    { name: 'Home', href: '/' },
-    { name: 'Activities', href: '/activities' },
-    { name: 'Curriculum', href: '/activities#curriculum' },
-    { name: 'Pricing', href: '/contact' },
+  schools: [
+    { name: 'School Program', href: '/schools' },
+    { name: 'Curriculum', href: '/activities' },
+    { name: 'Partner With Us', href: '/contact' },
+    { name: 'Terms & Conditions', href: '/terms' },
+  ],
+  professionals: [
+    { name: 'All Courses', href: '/professionals' },
+    { name: 'AI Agents Course', href: '/professionals/courses/workflow-automation' },
+    { name: 'QA Automation', href: '/professionals/courses/qa-automation' },
+    { name: 'Data Analyst', href: '/professionals/courses/data-analyst' },
   ],
   company: [
     { name: 'About Us', href: '/about' },
-    { name: 'Terms & Conditions', href: '/terms' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
     { name: 'Careers', href: '/contact' },
-    { name: 'Press', href: '/about' },
-  ],
-  resources: [
-    { name: 'Blog', href: '#' },
-    { name: 'Documentation', href: '#' },
-    { name: 'Community', href: '#' },
-    { name: 'Support', href: '/contact' },
   ],
 }
 
@@ -69,8 +68,8 @@ export default function Footer() {
               </motion.div>
             </Link>
             <p className="text-gray-400 mb-6 max-w-sm">
-              Empowering students with AI skills for the future. Learn workflow automation, 
-              AI agents, and responsible AI use through our innovative curriculum.
+              India&apos;s leading AI learning platform — empowering school students with AI
+              literacy and helping professionals upskill with 100% placement assistance.
             </p>
             
             {/* Contact Info */}
@@ -92,13 +91,30 @@ export default function Footer() {
 
           {/* Links Columns */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Product</h3>
+            <h3 className="text-white font-semibold mb-4">For Schools</h3>
             <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
+              {footerLinks.schools.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
                     className="text-gray-400 hover:text-primary-400 transition-colors flex items-center gap-1 group"
+                  >
+                    {link.name}
+                    <ArrowUpRight className="w-4 h-4 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-white font-semibold mb-4">Pro Courses</h3>
+            <ul className="space-y-3">
+              {footerLinks.professionals.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-purple-400 transition-colors flex items-center gap-1 group"
                   >
                     {link.name}
                     <ArrowUpRight className="w-4 h-4 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
@@ -112,23 +128,6 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4">Company</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-primary-400 transition-colors flex items-center gap-1 group"
-                  >
-                    {link.name}
-                    <ArrowUpRight className="w-4 h-4 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white font-semibold mb-4">Resources</h3>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}

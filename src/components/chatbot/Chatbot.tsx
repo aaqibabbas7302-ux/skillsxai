@@ -1,17 +1,18 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  MessageCircle, 
-  X, 
-  Send, 
-  Bot, 
-  User, 
+import ReactMarkdown from 'react-markdown'
+import {
+  MessageCircle,
+  X,
+  Send,
   Sparkles,
+  User,
   Loader2,
   MinusCircle,
-  Maximize2
+  Maximize2,
+  RotateCcw,
 } from 'lucide-react'
 
 interface Message {
@@ -21,290 +22,334 @@ interface Message {
   timestamp: Date
 }
 
-// Pre-defined responses for common questions
-const knowledgeBase: Record<string, string> = {
-  'hello': "Hello! 👋 Welcome to SkillsXAI! I'm your AI assistant. How can I help you today? Feel free to ask about our courses, curriculum, or enrollment process!",
-  'hi': "Hi there! 👋 Welcome to SkillsXAI! I'm here to help you learn about our AI education programs. What would you like to know?",
-  'course': "Our main offering is the **Workflow Automation & AI Agents** program - a 3-day intensive course designed for school students. It covers:\n\n🤖 **Day 1:** AI Fundamentals & Logic\n🔁 **Day 2:** Automation & AI Agents\n🛡️ **Day 3:** Ethics & Career Awareness\n\nWould you like to know more about any specific day?",
-  'curriculum': "Our curriculum is carefully designed for students aged 12-18. Here's what we cover:\n\n**Day 1:** Introduction to AI, IF-THEN logic, prompt writing basics\n**Day 2:** No-code automation tools, AI agents, workflows\n**Day 3:** Ethics, data privacy, career awareness, project presentation\n\nNo prior coding experience needed! Would you like more details?",
-  'price': "For pricing information and customized packages for your school, please contact us directly:\n\n📧 Email: info@skillsxai.com\n📞 Phone: +91 8285347868\n\nWe offer flexible pricing based on the number of students and program customization needs.",
-  'enroll': "Great interest in enrolling! 🎉 Here's how to get started:\n\n1. Fill out our contact form on the Contact page\n2. Select 'School Partnership' or 'Parent Inquiry'\n3. Our team will reach out within 24 hours\n\nYou can also email us directly at info@skillsxai.com",
-  'age': "Our program is designed for students aged **12-18 years** (typically grades 7-12). The content is adapted based on the grade level to ensure it's engaging and appropriate for each age group.",
-  'duration': "The core program is **3 days** (approximately 6 hours per day, totaling 18 hours). We also offer:\n\n• Extended 5-day programs\n• Weekend workshops\n• After-school sessions\n\nContact us to discuss the best format for your school!",
-  'coding': "**No coding experience required!** 🎉\n\nOur program uses no-code automation tools and focuses on concepts like logical thinking, workflow design, and responsible AI use. Students learn to work WITH AI, not necessarily to build it from scratch.",
-  'certificate': "Yes! Upon successful completion of the program, students receive:\n\n🏆 **Certificate of Completion** from SkillsXAI\n📊 **Skills Assessment Report**\n💡 **Project Portfolio** featuring their automation project\n\nThese can be great additions to college applications!",
-  'contact': "You can reach us through:\n\n📧 **Email:** info@skillsxai.com\n📞 **Phone:** +91 8285347868\n📍 **Address:** Plot 28, Sheesham Courtyard, Sainik Farm, New Delhi 110030\n🌐 **Contact Form:** Visit our Contact page\n\nWe typically respond within 24 hours!",
-  'ai': "Artificial Intelligence (AI) refers to computer systems that can perform tasks that typically require human intelligence. This includes:\n\n• Understanding language\n• Making decisions\n• Recognizing patterns\n• Learning from experience\n\nOur course helps students understand these concepts in a fun, practical way!",
-  'automation': "Workflow automation is about making repetitive tasks run automatically. For example:\n\n• Automatically organizing files\n• Sending scheduled emails\n• Processing form responses\n\nStudents learn to identify these opportunities and build simple automated workflows using no-code tools!",
-  'default': "Thanks for your question! I'm here to help you learn about SkillsXAI. Here are some things I can help with:\n\n• 📚 **Course information** - What we teach\n• 🎯 **Curriculum details** - Day-by-day breakdown\n• 💰 **Pricing & enrollment** - How to join\n• 👥 **Age requirements** - Who can participate\n• 📞 **Contact information** - Get in touch\n\nWhat would you like to know more about?"
+const QUICK_REPLIES = [
+  '🎓 School program kya hai?',
+  '💼 Professional courses',
+  '📍 100% placement kaise?',
+  '💰 Fees & EMI',
+  '📞 Contact info',
+]
+
+const WELCOME_MESSAGE: Message = {
+  id: 'welcome',
+  role: 'assistant',
+  content:
+    "Namaste! 👋 Main hoon **Aria**, SkillsXAI ki AI assistant.\n\nMain aapki help kar sakti hoon — chahe aap apne school ke liye AI program dhundh rahe hoon, ya khud ka career transform karna chahte hoon with **100% placement guarantee**.\n\nKya jaanna chahte hain aap? 😊",
+  timestamp: new Date(),
 }
 
-function getAIResponse(userMessage: string): string {
-  const lowerMessage = userMessage.toLowerCase()
-  
-  // Check for keywords in the message
-  if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-    return knowledgeBase['hello']
-  }
-  if (lowerMessage.includes('course') || lowerMessage.includes('program') || lowerMessage.includes('what do you teach')) {
-    return knowledgeBase['course']
-  }
-  if (lowerMessage.includes('curriculum') || lowerMessage.includes('syllabus') || lowerMessage.includes('topics') || lowerMessage.includes('learn')) {
-    return knowledgeBase['curriculum']
-  }
-  if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('fee') || lowerMessage.includes('how much')) {
-    return knowledgeBase['price']
-  }
-  if (lowerMessage.includes('enroll') || lowerMessage.includes('register') || lowerMessage.includes('sign up') || lowerMessage.includes('join')) {
-    return knowledgeBase['enroll']
-  }
-  if (lowerMessage.includes('age') || lowerMessage.includes('grade') || lowerMessage.includes('years old') || lowerMessage.includes('class')) {
-    return knowledgeBase['age']
-  }
-  if (lowerMessage.includes('duration') || lowerMessage.includes('how long') || lowerMessage.includes('days') || lowerMessage.includes('hours')) {
-    return knowledgeBase['duration']
-  }
-  if (lowerMessage.includes('coding') || lowerMessage.includes('programming') || lowerMessage.includes('code') || lowerMessage.includes('experience')) {
-    return knowledgeBase['coding']
-  }
-  if (lowerMessage.includes('certificate') || lowerMessage.includes('certification') || lowerMessage.includes('credential')) {
-    return knowledgeBase['certificate']
-  }
-  if (lowerMessage.includes('contact') || lowerMessage.includes('email') || lowerMessage.includes('phone') || lowerMessage.includes('reach')) {
-    return knowledgeBase['contact']
-  }
-  if (lowerMessage.includes('what is ai') || lowerMessage.includes('artificial intelligence') || lowerMessage.includes('explain ai')) {
-    return knowledgeBase['ai']
-  }
-  if (lowerMessage.includes('automation') || lowerMessage.includes('automate') || lowerMessage.includes('workflow')) {
-    return knowledgeBase['automation']
-  }
-  if (lowerMessage.includes('thank')) {
-    return "You're welcome! 😊 If you have any more questions about SkillsXAI, feel free to ask. We're here to help you start your AI learning journey!"
-  }
-  if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) {
-    return "Goodbye! 👋 Thanks for chatting with us. Feel free to come back anytime you have questions. Good luck with your AI learning journey! 🚀"
-  }
-  
-  return knowledgeBase['default']
-}
+// Pre-defined responses removed — now powered by Gemini AI
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: "Hi there! 👋 I'm the SkillsXAI assistant. I can help answer your questions about our AI education programs, curriculum, enrollment, and more. What would you like to know?",
-      timestamp: new Date(),
-    },
-  ])
+  const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [])
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+  useEffect(() => { scrollToBottom() }, [messages, scrollToBottom])
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
-      inputRef.current?.focus()
+      setTimeout(() => inputRef.current?.focus(), 100)
     }
   }, [isOpen, isMinimized])
 
-  const handleSend = async () => {
-    if (!inputValue.trim()) return
+  const sendMessage = async (text: string) => {
+    const trimmed = text.trim()
+    if (!trimmed || isTyping) return
 
-    const userMessage: Message = {
+    setError(null)
+
+    const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputValue.trim(),
+      content: trimmed,
       timestamp: new Date(),
     }
 
-    setMessages(prev => [...prev, userMessage])
+    const updatedMessages = [...messages, userMsg]
+    setMessages(updatedMessages)
     setInputValue('')
     setIsTyping(true)
 
-    // Simulate AI thinking delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000))
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
+        }),
+      })
 
-    const aiResponse = getAIResponse(userMessage.content)
-    
-    const assistantMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content: aiResponse,
-      timestamp: new Date(),
+      const data = await res.json()
+
+      if (!res.ok || data.error) {
+        // Use server's user-friendly message if available
+        throw new Error(data.error || 'Something went wrong')
+      }
+
+      setMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.content,
+          timestamp: new Date(),
+        },
+      ])
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Network error. Please try again.'
+      setError(null) // clear banner, show inline instead
+      setMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: msg,
+          timestamp: new Date(),
+        },
+      ])
+    } finally {
+      setIsTyping(false)
     }
-
-    setIsTyping(false)
-    setMessages(prev => [...prev, assistantMessage])
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSend()
+      sendMessage(inputValue)
     }
+  }
+
+  const resetChat = () => {
+    setMessages([WELCOME_MESSAGE])
+    setError(null)
+    setIsTyping(false)
   }
 
   return (
     <>
-      {/* Chat Button */}
+      {/* ── Floating Button ── */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
+            key="chat-btn"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.1 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-accent-cyan shadow-lg flex items-center justify-center group hover:scale-110 transition-transform"
-            style={{ boxShadow: '0 4px 30px rgba(59, 130, 246, 0.5)' }}
+            className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-accent-cyan shadow-2xl flex items-center justify-center"
+            style={{ boxShadow: '0 4px 30px rgba(59,130,246,0.55)' }}
+            aria-label="Open chat"
           >
             <MessageCircle className="w-7 h-7 text-white" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-dark-900" />
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-[#0a0f1a] animate-pulse" />
           </motion.button>
         )}
       </AnimatePresence>
 
-      {/* Chat Window */}
+      {/* ── Chat Window ── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0, 
-              scale: 1,
+            key="chat-window"
+            initial={{ opacity: 0, y: 24, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.94 }}
+            transition={{ type: 'spring', damping: 22, stiffness: 280 }}
+            className="fixed bottom-6 right-6 z-50 w-[390px] max-w-[calc(100vw-1.5rem)] rounded-3xl overflow-hidden flex flex-col"
+            style={{
               height: isMinimized ? 'auto' : '600px',
+              background: 'rgba(8, 12, 22, 0.97)',
+              border: '1px solid rgba(59,130,246,0.2)',
+              boxShadow: '0 8px 60px rgba(59,130,246,0.25)',
+              backdropFilter: 'blur(20px)',
             }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] glass rounded-2xl shadow-2xl overflow-hidden flex flex-col"
-            style={{ boxShadow: '0 8px 60px rgba(59, 130, 246, 0.3)' }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-primary-500/20 bg-gradient-to-r from-primary-600/20 to-accent-purple/20">
+            {/* ── Header ── */}
+            <div className="flex-shrink-0 flex items-center justify-between px-4 py-3.5 border-b border-white/8 bg-gradient-to-r from-primary-600/15 to-purple-600/15">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-lg shadow-primary-500/30">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-[#080c16]" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">SkillsXAI Assistant</h3>
-                  <p className="text-xs text-green-400 flex items-center gap-1">
-                    <span className="w-2 h-2 bg-green-400 rounded-full" />
-                    Online
-                  </p>
+                  <p className="font-semibold text-white text-sm leading-none mb-0.5">Aria</p>
+                  <p className="text-[11px] text-green-400 leading-none">SkillsXAI AI Assistant · Online</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={resetChat}
+                  className="p-2 rounded-xl hover:bg-white/8 text-gray-500 hover:text-gray-300 transition-colors"
+                  title="Clear chat"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
                 <button
                   onClick={() => setIsMinimized(!isMinimized)}
-                  className="p-2 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                  className="p-2 rounded-xl hover:bg-white/8 text-gray-500 hover:text-gray-300 transition-colors"
                 >
                   {isMinimized ? <Maximize2 className="w-4 h-4" /> : <MinusCircle className="w-4 h-4" />}
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                  className="p-2 rounded-xl hover:bg-white/8 text-gray-500 hover:text-gray-300 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Messages */}
             {!isMinimized && (
               <>
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {messages.map((message) => (
+                {/* ── Messages ── */}
+                <div
+                  className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scroll-smooth"
+                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.08) transparent' }}
+                >
+                  {messages.map((msg) => (
                     <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
+                      transition={{ duration: 0.22 }}
+                      className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                     >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        message.role === 'user' 
-                          ? 'bg-accent-purple/30' 
-                          : 'bg-primary-500/30'
+                      {/* Avatar */}
+                      <div className={`w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 ${
+                        msg.role === 'user'
+                          ? 'bg-purple-500/25'
+                          : 'bg-gradient-to-br from-primary-500 to-accent-cyan shadow-sm shadow-primary-500/30'
                       }`}>
-                        {message.role === 'user' ? (
-                          <User className="w-4 h-4 text-accent-purple" />
-                        ) : (
-                          <Sparkles className="w-4 h-4 text-primary-400" />
-                        )}
+                        {msg.role === 'user'
+                          ? <User className="w-3.5 h-3.5 text-purple-300" />
+                          : <Sparkles className="w-3.5 h-3.5 text-white" />
+                        }
                       </div>
-                      <div className={`max-w-[75%] p-3 rounded-2xl ${
-                        message.role === 'user'
-                          ? 'bg-accent-purple/20 text-white rounded-tr-sm'
-                          : 'bg-dark-700 text-gray-200 rounded-tl-sm'
+
+                      {/* Bubble */}
+                      <div className={`max-w-[78%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-purple-600/40 to-pink-600/20 text-white rounded-tr-sm border border-purple-500/20'
+                          : 'bg-white/6 text-gray-100 rounded-tl-sm border border-white/8'
                       }`}>
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                        <p className="text-[10px] text-gray-500 mt-1">
-                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {msg.role === 'assistant' ? (
+                          <div className="prose prose-invert prose-sm max-w-none
+                            prose-p:my-1 prose-p:leading-relaxed
+                            prose-strong:text-white prose-strong:font-semibold
+                            prose-ul:my-1 prose-ul:pl-4 prose-li:my-0.5
+                            prose-headings:text-white prose-headings:font-semibold
+                          ">
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                          </div>
+                        ) : (
+                          <p>{msg.content}</p>
+                        )}
+                        <p className="text-[10px] text-gray-600 mt-1.5 select-none">
+                          {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
                     </motion.div>
                   ))}
-                  
-                  {/* Typing Indicator */}
-                  {isTyping && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="flex gap-3"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-primary-500/30 flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-primary-400" />
-                      </div>
-                      <div className="bg-dark-700 p-3 rounded-2xl rounded-tl-sm">
-                        <div className="flex gap-1">
-                          <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+
+                  {/* Typing indicator */}
+                  <AnimatePresence>
+                    {isTyping && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 6 }}
+                        className="flex gap-2.5"
+                      >
+                        <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center flex-shrink-0 shadow-sm shadow-primary-500/30">
+                          <Sparkles className="w-3.5 h-3.5 text-white" />
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                  
+                        <div className="bg-white/6 border border-white/8 px-4 py-3.5 rounded-2xl rounded-tl-sm">
+                          <div className="flex gap-1 items-center">
+                            {[0, 1, 2].map(i => (
+                              <motion.span
+                                key={i}
+                                className="w-1.5 h-1.5 bg-primary-400 rounded-full"
+                                animate={{ y: [0, -5, 0] }}
+                                transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.18 }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Input */}
-                <div className="p-4 border-t border-primary-500/20">
-                  <div className="flex gap-2">
+                {/* ── Quick Replies (shown only at start) ── */}
+                {messages.length <= 2 && !isTyping && (
+                  <div className="px-4 pb-2 flex gap-2 flex-wrap">
+                    {QUICK_REPLIES.map(q => (
+                      <button
+                        key={q}
+                        onClick={() => sendMessage(q)}
+                        className="text-[11px] px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:bg-primary-500/15 hover:border-primary-500/30 hover:text-white transition-all whitespace-nowrap"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* ── Error Banner ── */}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mx-4 mb-2 px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center"
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* ── Input Area ── */}
+                <div className="flex-shrink-0 px-4 pb-4 pt-2 border-t border-white/8">
+                  <div className="flex gap-2 items-center">
                     <input
                       ref={inputRef}
                       type="text"
                       value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Ask me anything..."
-                      className="flex-1 px-4 py-3 rounded-xl bg-dark-700 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors text-sm"
+                      onChange={e => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      disabled={isTyping}
+                      placeholder="Kuch bhi poochh sakte hain…"
+                      className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 text-sm outline-none focus:border-primary-500/40 focus:bg-white/8 transition-all disabled:opacity-50"
                     />
                     <button
-                      onClick={handleSend}
+                      onClick={() => sendMessage(inputValue)}
                       disabled={!inputValue.trim() || isTyping}
-                      className="w-12 h-12 rounded-xl bg-gradient-to-r from-primary-500 to-accent-cyan flex items-center justify-center text-white disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+                      className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center flex-shrink-0 text-white disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-primary-500/30 transition-all active:scale-95"
                     >
-                      {isTyping ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                      ) : (
-                        <Send className="w-5 h-5" />
-                      )}
+                      {isTyping
+                        ? <Loader2 className="w-4 h-4 animate-spin" />
+                        : <Send className="w-4 h-4" />
+                      }
                     </button>
                   </div>
-                  <p className="text-[10px] text-gray-500 text-center mt-2">
-                    Powered by SkillsXAI 🤖
+                  <p className="text-[10px] text-gray-700 text-center mt-2 select-none">
+                    Powered by Gemini AI · SkillsXAI 🤖
                   </p>
                 </div>
               </>
