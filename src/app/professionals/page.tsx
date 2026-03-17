@@ -200,8 +200,8 @@ const whyUs = [
   },
   {
     icon: Shield,
-    title: '100% Placement Guarantee',
-    desc: "Complete the course, meet the requirements, and get placed — or we refund your fees. No fine print.",
+    title: '100% Placement Assurance',
+    desc: "Complete the course, meet the requirements, and we ensure you get placed. Dedicated support until you land your dream role.",
     color: 'text-green-400',
     bg: 'bg-green-500/10',
   },
@@ -256,8 +256,8 @@ const testimonials = [
 
 const faqs = [
   {
-    q: 'What exactly is the 100% placement guarantee?',
-    a: "We commit to placing you in a relevant role before your course ends. If you complete all assignments, attend mock interviews, and submit job applications but don't receive an offer within 60 days of completion, we provide a full fee refund. Our current placement rate is 100%.",
+    q: 'What exactly is the 100% placement assurance?',
+    a: "We commit to placing you in a relevant role. If you complete all assignments, attend mock interviews, and submit job applications, our dedicated placement team provides continuous support — including direct referrals, interview prep, and offer negotiation — until you are successfully placed. Our current placement rate is 100%.",
   },
   {
     q: 'Do I need prior technical experience to join?',
@@ -335,7 +335,7 @@ export default function ProfessionalsPage() {
             <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-10">
               Industry-ready courses in AI Automation, QA Testing &amp; Data Analytics.
               Learn from experts, build real projects, and land your dream job — backed by
-              our <span className="text-purple-400 font-semibold">100% placement guarantee</span>.
+              our <span className="text-purple-400 font-semibold">100% placement assurance</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -583,7 +583,7 @@ export default function ProfessionalsPage() {
             ))}
           </motion.div>
 
-          {/* Placement guarantee banner */}
+          {/* Placement assurance banner */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -599,10 +599,10 @@ export default function ProfessionalsPage() {
                   <Shield className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-1">100% Placement Guarantee</h3>
+                  <h3 className="text-2xl font-bold text-white mb-1">100% Placement Assurance</h3>
                   <p className="text-white/75 max-w-lg">
-                    Complete the course, pass our evaluations, and get placed — or receive a full
-                    fee refund. We have maintained a 100% placement record since inception.
+                    Complete the course, pass our evaluations, and get placed — our dedicated team
+                    supports you until you land a confirmed offer. We have maintained a 100% placement record since inception.
                   </p>
                 </div>
               </div>

@@ -34,7 +34,7 @@ const WELCOME_MESSAGE: Message = {
   id: 'welcome',
   role: 'assistant',
   content:
-    "Namaste! 👋 Main hoon **Aria**, SkillsXAI ki AI assistant.\n\nMain aapki help kar sakti hoon — chahe aap apne school ke liye AI program dhundh rahe hoon, ya khud ka career transform karna chahte hoon with **100% placement guarantee**.\n\nKya jaanna chahte hain aap? 😊",
+    "Namaste! 👋 Main hoon **Aria**, SkillsXAI ki AI assistant.\n\nMain aapki help kar sakti hoon — chahe aap apne school ke liye AI program dhundh rahe hoon, ya khud ka career transform karna chahte hoon with **100% placement assurance**.\n\nKya jaanna chahte hain aap? 😊",
   timestamp: new Date(),
 }
 
@@ -228,11 +228,10 @@ export default function Chatbot() {
                       className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                     >
                       {/* Avatar */}
-                      <div className={`w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 ${
-                        msg.role === 'user'
+                      <div className={`w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 ${msg.role === 'user'
                           ? 'bg-purple-500/25'
                           : 'bg-gradient-to-br from-primary-500 to-accent-cyan shadow-sm shadow-primary-500/30'
-                      }`}>
+                        }`}>
                         {msg.role === 'user'
                           ? <User className="w-3.5 h-3.5 text-purple-300" />
                           : <Sparkles className="w-3.5 h-3.5 text-white" />
@@ -240,11 +239,10 @@ export default function Chatbot() {
                       </div>
 
                       {/* Bubble */}
-                      <div className={`max-w-[78%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                        msg.role === 'user'
+                      <div className={`max-w-[78%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
                           ? 'bg-gradient-to-br from-purple-600/40 to-pink-600/20 text-white rounded-tr-sm border border-purple-500/20'
                           : 'bg-white/6 text-gray-100 rounded-tl-sm border border-white/8'
-                      }`}>
+                        }`}>
                         {msg.role === 'assistant' ? (
                           <div className="prose prose-invert prose-sm max-w-none
                             prose-p:my-1 prose-p:leading-relaxed
