@@ -17,6 +17,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
+import StickyCourseCTA from '@/components/seo/StickyCourseCTA'
+import LeadCapturePopup from '@/components/seo/LeadCapturePopup'
 
 const curriculum = [
   {
@@ -107,6 +109,18 @@ export default function DataAnalystPage() {
 
   return (
     <div className="relative">
+      <StickyCourseCTA
+        courseName="Data Analyst — Python & Power BI"
+        gradientFrom="from-cyan-600"
+        gradientTo="to-teal-600"
+      />
+      <LeadCapturePopup
+        title="Free Data Analyst Career Roadmap"
+        description="Download our step-by-step roadmap to becoming a data analyst in India — includes salary benchmarks, tools to learn, and interview tips."
+        ctaText="Get the Roadmap"
+        leadMagnet="da-career-roadmap"
+        delayMs={45000}
+      />
       {/* ── Hero ── */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="hero-orb w-[500px] h-[500px] bg-cyan-600/20 -top-40 -left-40" />
@@ -382,23 +396,131 @@ export default function DataAnalystPage() {
         </div>
       </section>
 
+      {/* ── FAQ Section ── */}
+      <section className="py-20 relative" id="faq">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="section-title text-center mb-12">
+            <span className="text-white">Frequently Asked </span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Questions</span>
+          </h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: 'Do I need coding experience to become a data analyst?',
+                a: 'No! Our course starts from the absolute basics. You will learn Python from scratch, starting with fundamentals and building up to Pandas and NumPy for data analysis. Many of our successful graduates came from non-technical backgrounds like commerce, operations, and marketing.',
+              },
+              {
+                q: 'What tools will I learn in this data analyst course?',
+                a: 'You will learn Python (Pandas, NumPy, Matplotlib, Seaborn), SQL (from basics to advanced window functions), Power BI (data modeling, DAX, interactive dashboards), Tableau (data visualization and storytelling), Excel (advanced functions, pivot tables), and Jupyter Notebooks.',
+              },
+              {
+                q: 'How does the placement assistance work for data analysts?',
+                a: 'Our dedicated placement team provides ATS-friendly resume building, LinkedIn optimization, 5+ mock interviews, and direct referrals to 350+ hiring partner companies including IT services, fintech, startups, and MNCs. We support you until you receive a confirmed offer letter.',
+              },
+              {
+                q: 'What salary can I expect as a fresher data analyst in India?',
+                a: 'Freshers typically start at ₹3.5L–₹6L/year. With 1-3 years of experience, salaries range from ₹6L–₹10L/year. Mid-level data analysts (3-5 years) earn ₹10L–₹16L/year. Senior analysts and those with Power BI + Python skills earn ₹16L–₹25L/year.',
+              },
+              {
+                q: 'Should I learn Power BI or Tableau?',
+                a: 'Our course teaches both. Power BI has more job listings in India due to Microsoft\'s enterprise dominance. Tableau roles often pay slightly more. Having both tools on your resume makes you the most versatile candidate. We recommend starting with Power BI.',
+              },
+              {
+                q: 'What projects will I build during the course?',
+                a: 'You will build 3-5 real-world projects including e-commerce sales analysis dashboards, financial data analysis with Python, customer churn prediction, HR analytics dashboards in Power BI, and a capstone project with a live dataset. These projects form your portfolio for interviews.',
+              },
+              {
+                q: 'How long is the course and what is the weekly commitment?',
+                a: 'The course is 10 weeks long with live interactive sessions. You need approximately 12-15 hours per week including live classes, practice exercises, and project work. Weekend and weekday batches are available. All sessions are recorded.',
+              },
+              {
+                q: 'Is Python necessary for data analytics?',
+                a: 'Python is increasingly essential for data analysts. While you can start with Excel and SQL, Python (with Pandas) allows you to handle larger datasets, automate reports, build statistical models, and create custom visualizations. Our course covers Python specifically for data analysis — no web development or software engineering.',
+              },
+            ].map((faq, i) => (
+              <FAQItem key={i} question={faq.q} answer={faq.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Related Blog Posts ── */}
+      <section className="py-16 relative bg-gradient-to-b from-dark-800/30 to-dark-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-white mb-8 text-center">Learn More About Data Analytics</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { title: 'How to Become a Data Analyst in India: Complete Roadmap', href: '/blog/how-to-become-data-analyst-india-complete-roadmap-2026', tag: 'Career Guide' },
+              { title: 'SQL for Data Analysts: 20 Queries You Must Know', href: '/blog/sql-for-data-analysts-20-queries-you-must-know', tag: 'Tutorial' },
+              { title: 'Power BI vs Tableau: Which Is Right for You?', href: '/blog/power-bi-vs-tableau-which-data-viz-tool-2026', tag: 'Comparison' },
+            ].map((post, i) => (
+              <Link
+                key={i}
+                href={post.href}
+                className="block p-6 rounded-xl border border-cyan-500/15 bg-dark-800/50 hover:border-cyan-500/40 transition-colors group"
+              >
+                <span className="text-xs text-cyan-400 font-medium">{post.tag}</span>
+                <h3 className="text-white font-semibold mt-2 group-hover:text-cyan-400 transition-colors">{post.title}</h3>
+                <span className="text-sm text-gray-500 mt-3 inline-block">Read article &rarr;</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="py-20 relative">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <div className="glass-card p-10 border border-cyan-500/20 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none" />
             <Rocket className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Become a Data Analyst?</h2>
-            <p className="text-gray-400 mb-8">March 2026 batch is filling up fast. Apply now.</p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 text-white font-semibold hover:from-cyan-500 hover:to-teal-500 transition-all shadow-lg"
-            >
-              Apply Now — March 2026 Batch <ArrowRight className="w-5 h-5" />
-            </Link>
+            <h2 className="text-3xl font-bold text-white mb-4">Start Your Data Analytics Career Today</h2>
+            <p className="text-gray-400 mb-3">Join hundreds of professionals who switched to data analytics with SkillsXAI.</p>
+            <p className="text-cyan-300 text-sm font-medium mb-8">Next batch starts soon — limited seats available</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 text-white font-semibold hover:from-cyan-500 hover:to-teal-500 transition-all shadow-lg"
+              >
+                Enroll Now <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-cyan-500/30 text-cyan-400 font-semibold hover:bg-cyan-500/10 transition-all"
+              >
+                <MessageSquare className="w-5 h-5" /> Talk to Advisor
+              </Link>
+            </div>
           </div>
         </div>
       </section>
+    </div>
+  )
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false)
+  return (
+    <div className="border border-cyan-500/15 rounded-xl overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full text-left p-5 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+      >
+        <span className="text-white font-medium">{question}</span>
+        {isOpen ? <ChevronUp className="w-5 h-5 text-cyan-400 flex-shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />}
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="px-5 pb-5 text-gray-400 leading-relaxed">{answer}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

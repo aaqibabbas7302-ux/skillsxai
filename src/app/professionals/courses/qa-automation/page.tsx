@@ -17,6 +17,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
+import StickyCourseCTA from '@/components/seo/StickyCourseCTA'
+import LeadCapturePopup from '@/components/seo/LeadCapturePopup'
 
 const curriculum = [
   {
@@ -107,6 +109,18 @@ export default function QAAutomationPage() {
 
   return (
     <div className="relative">
+      <StickyCourseCTA
+        courseName="QA Automation with Playwright"
+        gradientFrom="from-blue-600"
+        gradientTo="to-cyan-600"
+      />
+      <LeadCapturePopup
+        title="Free Playwright Cheat Sheet"
+        description="Download our Playwright locators & assertions cheat sheet — the quick reference guide every QA engineer needs."
+        ctaText="Get the Cheat Sheet"
+        leadMagnet="playwright-cheatsheet"
+        delayMs={45000}
+      />
       {/* ── Hero ── */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="hero-orb w-[500px] h-[500px] bg-blue-600/20 -top-40 -left-40" />
@@ -382,23 +396,131 @@ export default function QAAutomationPage() {
         </div>
       </section>
 
+      {/* ── FAQ Section ── */}
+      <section className="py-20 relative" id="faq">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="section-title text-center mb-12">
+            <span className="text-white">Frequently Asked </span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Questions</span>
+          </h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: 'Do I need prior programming experience to join this QA automation course?',
+                a: 'No prior programming experience is required. We start with JavaScript fundamentals and build up to advanced testing patterns. The course is designed for complete beginners, manual testers looking to transition, and developers wanting to add testing skills.',
+              },
+              {
+                q: 'What tools will I learn — Playwright, Cypress, or Selenium?',
+                a: 'You will learn all three: Playwright and Cypress in depth (these are the most in-demand modern tools), plus Selenium fundamentals for interviews. You will also learn Jest, Postman for API testing, GitHub Actions for CI/CD, and Allure for reporting.',
+              },
+              {
+                q: 'How does the 100% placement assistance work?',
+                a: 'Our placement team works with you from day one. This includes resume building with ATS-friendly templates, LinkedIn optimization, 5+ mock interviews simulating real company rounds, and direct referrals to our 350+ hiring partner companies. We support you until you receive a confirmed offer letter.',
+              },
+              {
+                q: 'What salary can I expect after completing this course?',
+                a: 'Freshers typically start at ₹4L–₹8L/year. Career switchers with prior experience often land roles at ₹6L–₹12L/year. Our graduates have reported salary hikes of 60-80% compared to their previous roles. Senior roles in QA automation go up to ₹18L–₹25L/year.',
+              },
+              {
+                q: 'Are the classes live or recorded?',
+                a: 'All classes are live and interactive with small batch sizes. Weekend and weekday batches are available. Every session is recorded and accessible for 6 months, so you never miss a class. You also get 1:1 mentor sessions weekly.',
+              },
+              {
+                q: 'What projects will I build during the course?',
+                a: 'You will build 3-5 real-world projects including a full E2E test suite for an e-commerce application, API test automation framework, visual regression testing setup, and a CI/CD pipeline with GitHub Actions. These projects form your portfolio for interviews.',
+              },
+              {
+                q: 'Is Playwright better than Selenium for career prospects?',
+                a: 'Playwright demand is growing rapidly — it commands a 15-25% salary premium over Selenium-only skills. However, many companies still use Selenium. Our course teaches both so you are prepared for any job requirement. Learning Playwright gives you an early-mover advantage.',
+              },
+              {
+                q: 'What is the course fee and are EMI options available?',
+                a: 'We offer competitive pricing with flexible EMI options. Contact our admissions team for current batch pricing and EMI plans. We believe quality education should be accessible — talk to an advisor for personalized options.',
+              },
+            ].map((faq, i) => (
+              <FAQItem key={i} question={faq.q} answer={faq.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Related Blog Posts ── */}
+      <section className="py-16 relative bg-gradient-to-b from-dark-800/30 to-dark-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-white mb-8 text-center">Learn More About QA Automation</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { title: 'The Complete Guide to Playwright Automation Testing', href: '/blog/complete-guide-playwright-automation-testing-2026', tag: 'Guide' },
+              { title: 'Playwright vs Selenium: Which Should You Learn?', href: '/blog/playwright-vs-selenium-which-should-you-learn-2026', tag: 'Comparison' },
+              { title: 'Playwright vs Cypress: Head-to-Head Comparison', href: '/blog/playwright-vs-cypress-head-to-head-comparison-2026', tag: 'Comparison' },
+            ].map((post, i) => (
+              <Link
+                key={i}
+                href={post.href}
+                className="block p-6 rounded-xl border border-blue-500/15 bg-dark-800/50 hover:border-blue-500/40 transition-colors group"
+              >
+                <span className="text-xs text-blue-400 font-medium">{post.tag}</span>
+                <h3 className="text-white font-semibold mt-2 group-hover:text-blue-400 transition-colors">{post.title}</h3>
+                <span className="text-sm text-gray-500 mt-3 inline-block">Read article &rarr;</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="py-20 relative">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <div className="glass-card p-10 border border-blue-500/20 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none" />
             <Rocket className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Become a QA Pro?</h2>
-            <p className="text-gray-400 mb-8">March 2026 batch is filling up fast. Apply now.</p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg"
-            >
-              Apply Now — March 2026 Batch <ArrowRight className="w-5 h-5" />
-            </Link>
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Become a QA Automation Pro?</h2>
+            <p className="text-gray-400 mb-3">Join 500+ professionals who transformed their careers with SkillsXAI.</p>
+            <p className="text-blue-300 text-sm font-medium mb-8">Next batch starts soon — limited seats available</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg"
+              >
+                Enroll Now <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-blue-500/30 text-blue-400 font-semibold hover:bg-blue-500/10 transition-all"
+              >
+                <MessageSquare className="w-5 h-5" /> Talk to Advisor
+              </Link>
+            </div>
           </div>
         </div>
       </section>
+    </div>
+  )
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false)
+  return (
+    <div className="border border-blue-500/15 rounded-xl overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full text-left p-5 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+      >
+        <span className="text-white font-medium">{question}</span>
+        {isOpen ? <ChevronUp className="w-5 h-5 text-blue-400 flex-shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />}
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="px-5 pb-5 text-gray-400 leading-relaxed">{answer}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
