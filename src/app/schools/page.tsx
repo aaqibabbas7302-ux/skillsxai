@@ -506,6 +506,102 @@ export default function SchoolsPage() {
         </div>
       </section>
 
+      {/* School Reels & Learning Videos */}
+      <section className="py-24 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={containerVariants}
+            className="text-center mb-16"
+          >
+            <motion.div
+              variants={itemVariants}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
+            >
+              <PlayCircle className="w-4 h-4 text-primary-400" />
+              <span className="text-sm text-gray-300">Watch & Learn</span>
+            </motion.div>
+            <motion.h2 variants={itemVariants} className="section-title">
+              <span className="text-white">See Our Program </span>
+              <span className="gradient-text">In Action</span>
+            </motion.h2>
+            <motion.p variants={itemVariants} className="section-subtitle">
+              From school reels to AI masterclasses — explore what we teach and how we bring it to life.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={containerVariants}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center"
+          >
+            {[
+              {
+                id: 'iOWDX0H3b_8',
+                title: 'AI Program Reel',
+                subtitle: 'Air Force Bal Bharati School, New Delhi',
+                tag: 'Featured School',
+                gradient: 'from-primary-500 to-accent-purple',
+                icon: MapPin,
+              },
+              {
+                id: 'KRTLWlSED0Y',
+                title: 'Learn AI Agents',
+                subtitle: 'What are AI Agents & how do they work?',
+                tag: 'AI Agents',
+                gradient: 'from-blue-500 to-cyan-500',
+                icon: Brain,
+              },
+              {
+                id: 'SvKZGFJctwI',
+                title: 'Stop Prompting, Start Retrieving',
+                subtitle: 'AI Agents + RAG Masterclass',
+                tag: 'RAG Masterclass',
+                gradient: 'from-purple-500 to-pink-500',
+                icon: Zap,
+              },
+              {
+                id: '3Khw3MeLKAI',
+                title: 'From Logic to Life',
+                subtitle: 'The Evolution of Artificial Intelligence',
+                tag: 'AI Evolution',
+                gradient: 'from-cyan-500 to-teal-500',
+                icon: Rocket,
+              },
+            ].map((video, index) => (
+              <motion.div key={index} variants={itemVariants} className="relative group w-full max-w-[280px]">
+                {/* Glow effect */}
+                <div className={`absolute -inset-1 bg-gradient-to-r ${video.gradient} rounded-3xl blur opacity-30 group-hover:opacity-60 transition duration-500`} />
+                <div className="relative glass-card p-3 rounded-3xl overflow-hidden">
+                  {/* Tag */}
+                  <div className={`absolute top-5 left-5 z-10 px-3 py-1 rounded-full bg-gradient-to-r ${video.gradient} text-white text-xs font-semibold`}>
+                    {video.tag}
+                  </div>
+                  <div style={{ width: '100%', aspectRatio: '9/16' }}>
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.id}?autoplay=0&rel=0&modestbranding=1`}
+                      title={video.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full rounded-2xl"
+                      style={{ border: 'none', minHeight: '400px' }}
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 text-center px-2">
+                  <p className="text-white font-semibold text-sm">{video.title}</p>
+                  <p className="text-gray-400 text-xs mt-1">{video.subtitle}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
