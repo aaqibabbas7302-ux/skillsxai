@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Data Analytics Cheat Sheet | SkillsXAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @page { size: A4; margin: 10mm; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    @media print {
+      .no-print { display: none !important; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body style="font-family: 'Inter', sans-serif; background: #0a0f1a; color: #e2e8f0; line-height: 1.5; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; min-height: 100vh;">
+
+  <div style="max-width: 900px; margin: 0 auto; padding: 24px 20px 40px;">
+
+    <header style="text-align: center; padding: 20px 16px 24px; border-bottom: 1px solid rgba(59, 130, 246, 0.25); margin-bottom: 20px;">
+      <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #06b6d4; font-weight: 600; margin-bottom: 6px;">SkillsXAI</div>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 700; background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Data Analytics Cheatsheet</h1>
+      <p style="margin: 10px 0 0; color: #94a3b8; font-size: 13px;">Reference guide: frameworks, tools, stats, and visualization</p>
+      <div class="no-print" style="margin-top: 16px;">
+        <button type="button" onclick="window.print()" style="font-family: 'Inter', sans-serif; cursor: pointer; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 13px; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);">Print / Save PDF</button>
+      </div>
+    </header>
+
+    <!-- 1. Fundamentals -->
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(59, 130, 246, 0.35), rgba(6, 182, 212, 0.2)); border-left: 4px solid #3b82f6;">1. Data Analytics Fundamentals</h2>
+      <p style="margin: 0 0 10px; color: #cbd5e1;">Four levels form a decision ladder: <strong style="color: #3b82f6;">what</strong> happened → <strong style="color: #06b6d4;">why</strong> → <strong style="color: #8b5cf6;">what next</strong> (likely) → <strong style="color: #a78bfa;">what to do</strong>.</p>
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 6px; overflow: hidden;">
+        <thead>
+          <tr style="background: rgba(15, 23, 42, 0.9);">
+            <th style="text-align: left; padding: 8px 10px; color: #94a3b8; font-weight: 600; width: 22%;">Type</th>
+            <th style="text-align: left; padding: 8px 10px; color: #94a3b8; font-weight: 600;">Question</th>
+            <th style="text-align: left; padding: 8px 10px; color: #94a3b8; font-weight: 600;">Examples</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(30, 41, 59, 0.45);">
+            <td style="padding: 8px 10px; color: #3b82f6; font-weight: 600; vertical-align: top;">Descriptive</td>
+            <td style="padding: 8px 10px; vertical-align: top;">What happened?</td>
+            <td style="padding: 8px 10px; color: #cbd5e1; vertical-align: top;">Dashboards, reports, trends over time, cohort snapshots</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.5);">
+            <td style="padding: 8px 10px; color: #06b6d4; font-weight: 600; vertical-align: top;">Diagnostic</td>
+            <td style="padding: 8px 10px; vertical-align: top;">Why did it happen?</td>
+            <td style="padding: 8px 10px; color: #cbd5e1; vertical-align: top;">Drill-downs, variance analysis, funnels, segment comparisons</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.45);">
+            <td style="padding: 8px 10px; color: #8b5cf6; font-weight: 600; vertical-align: top;">Predictive</td>
+            <td style="padding: 8px 10px; vertical-align: top;">What is likely to happen?</td>
+            <td style="padding: 8px 10px; color: #cbd5e1; vertical-align: top;">Forecasting, scoring, propensity models, A/B test lift estimates</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.5);">
+            <td style="padding: 8px 10px; color: #a78bfa; font-weight: 600; vertical-align: top;">Prescriptive</td>
+            <td style="padding: 8px 10px; vertical-align: top;">What should we do?</td>
+            <td style="padding: 8px 10px; color: #cbd5e1; vertical-align: top;">Optimization, pricing rules, resource allocation, scenario planning</td>
+          </tr>
+        </tbody>
+      </table>
+      <ul style="margin: 10px 0 0; padding-left: 18px; color: #94a3b8; font-size: 11px;">
+        <li><strong style="color: #e2e8f0;">Good practice:</strong> align metrics to decisions; document definitions (single source of truth).</li>
+        <li>Validate with stakeholders before building predictive/prescriptive layers on shaky data.</li>
+      </ul>
+      <div style="margin-top: 12px; padding: 10px 12px; border-radius: 6px; border: 1px dashed rgba(139, 92, 246, 0.35); background: rgba(15, 23, 42, 0.5);">
+        <div style="color: #a78bfa; font-weight: 600; font-size: 11px; margin-bottom: 6px;">Analyst workflow (typical)</div>
+        <ol style="margin: 0; padding-left: 18px; color: #94a3b8; font-size: 11px;">
+          <li style="margin-bottom: 4px;"><strong style="color: #cbd5e1;">Clarify</strong> the decision, audience, and success criteria (not just “more dashboard”).</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #cbd5e1;">Profile</strong> data: row counts, key uniqueness, null rates, min/max dates, grain of fact tables.</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #cbd5e1;">Transform</strong> in a repeatable layer (dbt, SQL views, Power Query) — avoid one-off spreadsheet fixes for production logic.</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #cbd5e1;">Validate</strong> with reconciliations (source vs. mart totals) and edge cases (refunds, timezone, currency).</li>
+          <li><strong style="color: #cbd5e1;">Communicate</strong> limitations: sampling, missing data, definitional changes, and freshness.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 2. SQL -->
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(6, 182, 212, 0.25), rgba(139, 92, 246, 0.2)); border-left: 4px solid #06b6d4;">2. SQL Quick Reference</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start;">
+        <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; padding: 10px 12px;">
+          <div style="color: #3b82f6; font-weight: 600; font-size: 12px; margin-bottom: 6px;">SELECT &amp; filters</div>
+          <code style="display: block; color: #cbd5e1; font-size: 10.5px; line-height: 1.6; white-space: pre-wrap;">SELECT col1, AGG(col2) AS metric
+FROM schema.table
+WHERE date_col &gt;= '2024-01-01'
+  AND status IN ('active','trial')
+GROUP BY 1
+HAVING SUM(amount) &gt; 0
+ORDER BY metric DESC
+LIMIT 100;</code>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 6px; padding: 10px 12px;">
+          <div style="color: #06b6d4; font-weight: 600; font-size: 12px; margin-bottom: 6px;">JOIN patterns</div>
+          <ul style="margin: 0; padding-left: 16px; color: #94a3b8; font-size: 11px;">
+            <li><strong style="color: #e2e8f0;">INNER</strong> — only matching keys in both tables.</li>
+            <li><strong style="color: #e2e8f0;">LEFT</strong> — all left rows; nulls if no match (common for fact + dimension).</li>
+            <li><strong style="color: #e2e8f0;">Avoid accidental duplicates:</strong> join on stable keys; dedupe dim tables first.</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top: 12px; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 6px; padding: 10px 12px;">
+        <div style="color: #8b5cf6; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Subqueries &amp; window functions</div>
+        <code style="display: block; color: #cbd5e1; font-size: 10.5px; line-height: 1.65; white-space: pre-wrap;">-- Correlated: per-user last order
+SELECT u.id, o.total
+FROM users u
+JOIN orders o ON o.id = (
+  SELECT id FROM orders o2
+  WHERE o2.user_id = u.id
+  ORDER BY o2.placed_at DESC LIMIT 1
+);
+
+-- Windows: running sum &amp; prior row
+SELECT order_date, revenue,
+  SUM(revenue) OVER (ORDER BY order_date) AS running,
+  LAG(revenue) OVER (ORDER BY order_date) AS prev
+FROM daily_sales;
+
+-- Common: row_number to dedupe
+SELECT * FROM (
+  SELECT *, ROW_NUMBER() OVER (PARTITION BY id ORDER BY updated_at DESC) AS rn
+  FROM events
+) t WHERE rn = 1;</code>
+      </div>
+      <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; padding: 10px 12px;">
+          <div style="color: #3b82f6; font-weight: 600; font-size: 12px; margin-bottom: 6px;">CTEs (readability &amp; reuse)</div>
+          <code style="display: block; color: #cbd5e1; font-size: 10.5px; line-height: 1.6; white-space: pre-wrap;">WITH daily AS (
+  SELECT user_id, DATE(ts) AS d, COUNT(*) AS ev
+  FROM events GROUP BY 1,2
+),
+flagged AS (
+  SELECT * FROM daily WHERE ev &gt;= 5
+)
+SELECT * FROM flagged;</code>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 6px; padding: 10px 12px;">
+          <div style="color: #06b6d4; font-weight: 600; font-size: 12px; margin-bottom: 6px;">CASE, NULLs, sets</div>
+          <code style="display: block; color: #cbd5e1; font-size: 10.5px; line-height: 1.55; white-space: pre-wrap;">CASE
+  WHEN amt &lt; 0 THEN 'refund'
+  WHEN amt IS NULL THEN 'unknown'
+  ELSE 'sale'
+END
+
+-- NULL never equals NULL: use IS NULL
+SELECT * FROM t WHERE col IS NULL;
+
+SELECT id FROM a
+UNION       -- distinct
+SELECT id FROM b;
+-- UNION ALL keeps duplicates (faster)</code>
+        </div>
+      </div>
+      <table style="width: 100%; margin-top: 12px; border-collapse: collapse; font-size: 10.5px; border: 1px solid rgba(148, 163, 184, 0.2);">
+        <thead>
+          <tr style="background: rgba(15, 23, 42, 0.9);">
+            <th style="text-align: left; padding: 6px 8px; color: #94a3b8; width: 28%;">Gotcha</th>
+            <th style="text-align: left; padding: 6px 8px; color: #94a3b8;">Mitigation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(30, 41, 59, 0.4);">
+            <td style="padding: 6px 8px; color: #06b6d4; font-weight: 600;">Duplicate keys after JOIN</td>
+            <td style="padding: 6px 8px; color: #cbd5e1;">Join to dimension at correct grain; dedupe with ROW_NUMBER or DISTINCT ON (Postgres).</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.5);">
+            <td style="padding: 6px 8px; color: #8b5cf6; font-weight: 600;">Implicit type coercion</td>
+            <td style="padding: 6px 8px; color: #cbd5e1;">Cast dates and numerics explicitly; compare VARCHAR ids carefully across systems.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin: 10px 0 0; font-size: 11px; color: #94a3b8;">Use <strong style="color: #e2e8f0;">EXPLAIN</strong> to inspect plans; index filter columns in large tables when possible.</p>
+    </section>
+
+    <!-- 3. Excel -->
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.15)); border-left: 4px solid #8b5cf6;">3. Excel for Analytics</h2>
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1px solid rgba(148, 163, 184, 0.2);">
+        <thead>
+          <tr style="background: rgba(30, 41, 59, 0.8);">
+            <th style="text-align: left; padding: 6px 10px; color: #94a3b8;">Topic</th>
+            <th style="text-align: left; padding: 6px 10px; color: #94a3b8;">How / when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(15, 23, 42, 0.55);">
+            <td style="padding: 6px 10px; color: #3b82f6; font-weight: 600; width: 28%;">VLOOKUP / XLOOKUP</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;"><code style="color: #06b6d4;">=XLOOKUP(key, keys_col, return_col, "—")</code> — prefer XLOOKUP (exact match, no column index error). VLOOKUP needs lookup column first.</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.35);">
+            <td style="padding: 6px 10px; color: #06b6d4; font-weight: 600;">Pivot tables</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Insert → Pivot: rows = dimensions, values = sum/count. Use <strong>Show Values As</strong> (%, of parent, running total) for quick variance views.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.55);">
+            <td style="padding: 6px 10px; color: #8b5cf6; font-weight: 600;">Conditional formatting</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Data bars, color scales, or rules like <code>cell &lt; 0</code> for exception reporting; keep palettes consistent with brand.</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.35);">
+            <td style="padding: 6px 10px; color: #a78bfa; font-weight: 600;">Charts</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Line = trends; column/bar = category comparison; avoid 3D; label axes; truncate long category labels.</td>
+          </tr>
+        </tbody>
+      </table>
+      <table style="width: 100%; margin-top: 10px; border-collapse: collapse; font-size: 11px; border: 1px solid rgba(148, 163, 184, 0.2);">
+        <thead>
+          <tr style="background: rgba(15, 23, 42, 0.85);">
+            <th style="text-align: left; padding: 6px 10px; color: #94a3b8;">Function / feature</th>
+            <th style="text-align: left; padding: 6px 10px; color: #94a3b8;">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(30, 41, 59, 0.35);">
+            <td style="padding: 6px 10px; color: #3b82f6; font-weight: 600; width: 32%;">INDEX / MATCH</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Two-way lookup: <code style="color: #06b6d4;">=INDEX(return_range, MATCH(row_key, colA,0), MATCH(col_key, row1,0))</code>. Safer than VLOOKUP for leftward columns.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.55);">
+            <td style="padding: 6px 10px; color: #06b6d4; font-weight: 600;">SUMIFS / COUNTIFS</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;"><code style="color: #8b5cf6;">=SUMIFS(sum_range, crit_range1, crit1, crit_range2, crit2)</code> — multiple AND conditions without array entry in all modern Excel.</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.35);">
+            <td style="padding: 6px 10px; color: #8b5cf6; font-weight: 600;">Excel Tables (Ctrl+T)</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Structured references auto-expand; easier for pivot source ranges and fewer broken references when rows are added.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin: 8px 0 0; font-size: 11px; color: #94a3b8;">Power Query (Get Data) to clean, merge, and refresh repeatable pipelines without copying formulas ad hoc.</p>
+    </section>
+
+    <!-- 4. Power BI -->
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.25)); border-left: 4px solid #3b82f6;">4. Power BI Essentials</h2>
+      <ul style="margin: 0; padding-left: 18px; color: #cbd5e1; font-size: 11px; columns: 2; column-gap: 20px;">
+        <li style="break-inside: avoid; margin-bottom: 6px;"><strong style="color: #3b82f6;">Model:</strong> star schema (facts + dimensions), active relationships, <strong>Filter direction</strong> (single for normal dims; both ways only with care).</li>
+        <li style="break-inside: avoid; margin-bottom: 6px;"><strong style="color: #06b6d4;">Calculated column vs measure:</strong> column = row context (stored); measure = aggregate with filter context (typically preferred for KPIs).</li>
+        <li style="break-inside: avoid; margin-bottom: 6px;"><strong style="color: #8b5cf6;">DAX — filter functions:</strong> <code>CALCULATE( [Sales], 'Region'[Name]="West" )</code>; <code>ALL, ALLEXCEPT, REMOVEFILTERS</code> to adjust filter context.</li>
+        <li style="break-inside: avoid; margin-bottom: 6px;"><strong>Time intel:</strong> <code>DATESYTD, SAMEPERIODLASTYEAR, DATESBETWEEN</code> (requires a date table marked as date table).</li>
+        <li style="break-inside: avoid; margin-bottom: 6px;"><strong>Visuals:</strong> table/matrix for details; line for trends; bar for ranks; map for geo; <strong>avoid pie</strong> for many slices — use bar.</li>
+        <li style="break-inside: avoid; margin-bottom: 6px;"><strong>Performance:</strong> reduce high-cardinality columns in visuals; use aggregations; DirectQuery only when data volume/real-time demands it.</li>
+      </ul>
+      <div style="margin-top: 12px; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 6px; padding: 10px 12px;">
+        <div style="color: #8b5cf6; font-weight: 600; font-size: 12px; margin-bottom: 6px;">DAX patterns (copy-paste starters)</div>
+        <code style="display: block; color: #cbd5e1; font-size: 10px; line-height: 1.65; white-space: pre-wrap;">-- Reuse filter context; add slice
+Sales West := CALCULATE( [Sales], 'Region'[Name] = "West" )
+
+-- Remove filters on Product (compare to total same period)
+Sales All Products := CALCULATE( [Sales], REMOVEFILTERS( 'Product' ) )
+
+-- YoY same measure (needs Date table relationship)
+Sales PY := CALCULATE( [Sales], SAMEPERIODLASTYEAR( 'Date'[Date] ) )
+
+-- Running total in visual (by date)
+Sales YTD := TOTALYTD( [Sales], 'Date'[Date] )</code>
+      </div>
+    </section>
+
+    <!-- 5. Statistics -->
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.2)); border-left: 4px solid #06b6d4;">5. Statistical Concepts</h2>
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1px solid rgba(148, 163, 184, 0.2);">
+        <thead>
+          <tr style="background: rgba(15, 23, 42, 0.9);">
+            <th style="text-align: left; padding: 6px 10px; color: #94a3b8;">Measure</th>
+            <th style="text-align: left; padding: 6px 10px; color: #94a3b8;">Meaning &amp; when it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(30, 41, 59, 0.4);">
+            <td style="padding: 6px 10px; color: #3b82f6; font-weight: 600; white-space: nowrap;">Mean (μ)</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Average; sensitive to outliers. Pair with distribution plot.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.5);">
+            <td style="padding: 6px 10px; color: #06b6d4; font-weight: 600;">Median</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">50th percentile; robust for skewed $ data (AOV, salary).</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.4);">
+            <td style="padding: 6px 10px; color: #8b5cf6; font-weight: 600;">Mode</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Most frequent; useful for categorical or binned data.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.5);">
+            <td style="padding: 6px 10px; color: #3b82f6; font-weight: 600;">Std dev (σ)</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Spread around mean. High σ → volatile; use with same units as the variable.</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.4);">
+            <td style="padding: 6px 10px; color: #06b6d4; font-weight: 600;">Correlation (r)</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Linear association (−1 to 1). <strong>Not causation</strong>; confounders and range restrictions distort r.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.5);">
+            <td style="padding: 6px 10px; color: #8b5cf6; font-weight: 600;">Percentiles (p25, p75)</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Robust spread; box plots show IQR (p75−p25). Watch for duplicate values in small samples.</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.4);">
+            <td style="padding: 6px 10px; color: #3b82f6; font-weight: 600;">Variance / CV</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Variance = average squared deviation. Coefficient of variation = σ/μ — compare volatility across different scales.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.5);">
+            <td style="padding: 6px 10px; color: #06b6d4; font-weight: 600;">Sampling bias</td>
+            <td style="padding: 6px 10px; color: #cbd5e1;">Convenience samples over/under-represent groups. Always ask: who is missing from this data?</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 12px; padding: 10px 12px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2); background: rgba(15, 23, 42, 0.55);">
+        <div style="color: #3b82f6; font-weight: 600; font-size: 11px; margin-bottom: 6px;">Experiments &amp; A/B tests (essentials)</div>
+        <ul style="margin: 0; padding-left: 18px; color: #94a3b8; font-size: 10.5px;">
+          <li style="margin-bottom: 4px;"><strong style="color: #cbd5e1;">Randomization</strong> balances known and unknown confounders; <strong>blocking</strong> (e.g. by day of week) can reduce noise when traffic is structured.</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #cbd5e1;">Type I error (α):</strong> false positive (declare winner when no effect). <strong>Type II (β):</strong> false negative. <strong>Power</strong> = 1−β; increase sample size, reduce variance, or lift effect size to improve power.</li>
+          <li style="margin-bottom: 4px;">Define <strong>primary metric</strong> up front; watch multiple testing / peeking (optional stopping inflates false positives) — pre-register analysis and use consistent exposure windows.</li>
+          <li>Report <strong>confidence interval</strong> for the lift, not just p-value; consider practical significance (minimum detectable effect that matters to the business).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. Visualization -->
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(139, 92, 246, 0.25), rgba(6, 182, 212, 0.15)); border-left: 4px solid #8b5cf6;">6. Data Visualization Best Practices</h2>
+      <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px;">
+        <div style="color: #3b82f6; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Chart selection (quick map)</div>
+        <ul style="margin: 0; padding-left: 18px; color: #94a3b8; font-size: 11px;">
+          <li>Change over time → line or area (stack only when parts sum to a meaningful total).</li>
+          <li>Compare categories → sorted bar; few periods → could use small multiples of lines.</li>
+          <li>Part-to-whole (few segments) → horizontal bar; many parts → table + conditional formatting often clearer than pie.</li>
+          <li>Relationship → scatter (size/color for 3rd/4th variable); heatmap for matrix of categories.</li>
+        </ul>
+      </div>
+      <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 6px; padding: 10px 12px;">
+        <div style="color: #06b6d4; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Storytelling with data</div>
+        <ol style="margin: 0; padding-left: 18px; color: #cbd5e1; font-size: 11px;">
+          <li style="margin-bottom: 4px;">Lead with the <strong>so what</strong> — the decision or action implied.</li>
+          <li style="margin-bottom: 4px;">One main message per view; de-clutter; align titles to the insight.</li>
+          <li style="margin-bottom: 4px;">Annotate context (events, baselines) and state data freshness / caveats.</li>
+        </ol>
+      </div>
+      <div style="margin-top: 10px; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 6px; padding: 10px 12px;">
+        <div style="color: #8b5cf6; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Accessibility &amp; clarity</div>
+        <ul style="margin: 0; padding-left: 18px; color: #94a3b8; font-size: 11px;">
+          <li>Do not rely on color alone — add labels, patterns, or direct values on marks.</li>
+          <li>Check contrast; colorblind-safe palettes (e.g. blue–orange) for key comparisons.</li>
+          <li>Sort categories by metric (not alphabet) when the story is rank or magnitude.</li>
+          <li>Start bar axis at 0 for length encodings; truncate only with clear break symbol and explanation.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. KPIs -->
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.2)); border-left: 4px solid #3b82f6;">7. Key Metrics &amp; KPIs by Industry</h2>
+      <table style="width: 100%; border-collapse: collapse; font-size: 10.5px; border: 1px solid rgba(148, 163, 184, 0.2);">
+        <thead>
+          <tr style="background: rgba(30, 41, 59, 0.85);">
+            <th style="text-align: left; padding: 6px 8px; color: #94a3b8; width: 18%;">Industry</th>
+            <th style="text-align: left; padding: 6px 8px; color: #94a3b8;">Sample KPIs (define numerator/denominator &amp; time window)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(15, 23, 42, 0.55);">
+            <td style="padding: 6px 8px; color: #3b82f6; font-weight: 600; vertical-align: top;">Marketing</td>
+            <td style="padding: 6px 8px; color: #cbd5e1; vertical-align: top;">CAC, LTV, LTV:CAC, ROAS / MER, conversion rate, email CTR, branded vs non-branded search share, pipeline influenced.</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.4);">
+            <td style="padding: 6px 8px; color: #06b6d4; font-weight: 600; vertical-align: top;">Finance</td>
+            <td style="padding: 6px 8px; color: #cbd5e1; vertical-align: top;">Gross margin %, OPEX ratio, DSO / DPO, current ratio, cash conversion cycle, budget variance, revenue recognition alignment.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.55);">
+            <td style="padding: 6px 8px; color: #8b5cf6; font-weight: 600; vertical-align: top;">Operations</td>
+            <td style="padding: 6px 8px; color: #cbd5e1; vertical-align: top;">Throughput, cycle time, FPY / defect rate, OEE, inventory turns, on-time in-full (OTIF), capacity utilization, SLA compliance.</td>
+          </tr>
+          <tr style="background: rgba(30, 41, 59, 0.4);">
+            <td style="padding: 6px 8px; color: #3b82f6; font-weight: 600; vertical-align: top;">SaaS / Product</td>
+            <td style="padding: 6px 8px; color: #cbd5e1; vertical-align: top;">MRR/ARR, net revenue retention (NRR), logo churn, expansion rate, PQL → paid conversion, activation rate, time-to-value, NPS/CSAT.</td>
+          </tr>
+          <tr style="background: rgba(15, 23, 42, 0.55);">
+            <td style="padding: 6px 8px; color: #06b6d4; font-weight: 600; vertical-align: top;">Retail / E‑com</td>
+            <td style="padding: 6px 8px; color: #cbd5e1; vertical-align: top;">Same-store sales growth, basket size, sell-through, gross margin return on investment (GMROI), return rate, stockout %, conversion by channel.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin: 10px 0 0; font-size: 10.5px; color: #64748b;">Naming: always document whether metrics are trailing 12 months, fiscal vs calendar, gross vs net of discounts, and attribution window for marketing.</p>
+    </section>
+
+    <section style="margin-bottom: 22px; page-break-inside: avoid;">
+      <h2 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #f8fafc; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2)); border-left: 4px solid #06b6d4;">Before you ship (quick checklist)</h2>
+      <div style="columns: 2; column-gap: 18px; font-size: 11px; color: #94a3b8;">
+        <ul style="margin: 0; padding-left: 18px;">
+          <li style="break-inside: avoid; margin-bottom: 6px;">Metric definition written in plain language + SQL/DAX snippet or formula.</li>
+          <li style="break-inside: avoid; margin-bottom: 6px;">Time zone and business calendar (week start, holidays) explicit.</li>
+          <li style="break-inside: avoid; margin-bottom: 6px;">Nulls and refunds handled consistently with finance/ops.</li>
+          <li style="break-inside: avoid; margin-bottom: 6px;">Spot-check: hand-calc or small export matches dashboard for a slice.</li>
+        </ul>
+        <ul style="margin: 0; padding-left: 18px;">
+          <li style="break-inside: avoid; margin-bottom: 6px;">Primary visual answers the title; remove chart junk (gridlines, 3D).</li>
+          <li style="break-inside: avoid; margin-bottom: 6px;">Version or “as of” date on shared reports.</li>
+          <li style="break-inside: avoid; margin-bottom: 6px;">PII minimized; access follows least privilege.</li>
+          <li style="break-inside: avoid; margin-bottom: 6px;">Known limitations listed (lags, estimates, incomplete sources).</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer style="margin-top: 28px; padding-top: 16px; border-top: 1px solid rgba(6, 182, 212, 0.25); text-align: center;">
+      <div style="font-size: 10px; color: #64748b; letter-spacing: 0.12em; text-transform: uppercase;">SkillsXAI</div>
+      <p style="margin: 6px 0 0; font-size: 11px; color: #475569;">For education &amp; reference. Validate formulas and business rules in your own environment.</p>
+    </footer>
+
+  </div>
+</body>
+</html>

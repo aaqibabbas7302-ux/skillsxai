@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NVIDIA NIM API Shortcuts — Developer Cheat Sheet | SkillsXAI</title>
+  <meta name="description" content="NVIDIA NIM APIs: models, endpoints, auth, Python &amp; curl examples, comparison table, and best practices for production LLM apps." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --bg-card: #0f1629;
+      --bg-code: #060a14;
+      --border: rgba(59, 130, 246, 0.2);
+      --text: #e8eef8;
+      --muted: #94a3b8;
+      --blue: #3b82f6;
+      --cyan: #06b6d4;
+      --purple: #8b5cf6;
+      --grad: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 50%, var(--purple) 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      font-size: 14px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      color-adjust: exact;
+    }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 100% 60% at 0% 0%, rgba(59, 130, 246, 0.12), transparent 50%),
+        radial-gradient(ellipse 80% 50% at 100% 20%, rgba(139, 92, 246, 0.1), transparent 45%),
+        radial-gradient(ellipse 70% 40% at 50% 100%, rgba(6, 182, 212, 0.08), transparent 55%);
+    }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 1.75rem 1.25rem 3rem; }
+    .print-bar { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
+    .btn-print {
+      font-family: inherit; font-size: 0.8125rem; font-weight: 600;
+      padding: 0.55rem 1.2rem; border-radius: 999px; cursor: pointer;
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.2));
+      color: #f0f9ff; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+      transition: transform 0.15s ease;
+    }
+    .btn-print:hover { transform: translateY(-1px); }
+    @media print {
+      .print-bar { display: none; }
+      .wrap { padding: 0; max-width: 100%; }
+      body { background: var(--bg); }
+    }
+    header.site {
+      border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem 1.5rem 1.35rem;
+      background: var(--bg-card); margin-bottom: 1.5rem; position: relative; overflow: hidden;
+    }
+    header.site::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad);
+    }
+    .brand { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--grad); display: grid; place-items: center;
+      font-weight: 700; font-size: 0.7rem; color: #fff; letter-spacing: -0.02em;
+    }
+    .brand h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.03em; }
+    .brand span { color: var(--muted); font-size: 0.8rem; font-weight: 500; }
+    .doc-title { margin-top: 0.85rem; font-size: 1.05rem; color: var(--cyan); font-weight: 600; }
+    .doc-sub { margin-top: 0.35rem; font-size: 0.85rem; color: var(--muted); max-width: 62ch; }
+    section.block {
+      margin-bottom: 1.35rem; padding: 1.15rem 1.2rem; border-radius: 12px;
+      background: var(--bg-card); border: 1px solid var(--border);
+    }
+    section.block h2 {
+      font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.65rem;
+      display: flex; align-items: center; gap: 0.45rem;
+    }
+    section.block h2 .tag {
+      font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 0.2rem 0.45rem; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: var(--cyan);
+    }
+    p, li { font-size: 0.8125rem; color: var(--muted); }
+    p { margin-bottom: 0.5rem; }
+    ul { margin-left: 1.1rem; margin-top: 0.35rem; }
+    li { margin-bottom: 0.35rem; }
+    code, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; }
+    .code {
+      background: var(--bg-code); border: 1px solid rgba(6, 182, 212, 0.15);
+      border-radius: 8px; padding: 0.75rem 0.85rem; margin-top: 0.5rem; overflow-x: auto;
+      color: #cbd5e1; line-height: 1.5;
+    }
+    .code .k { color: var(--cyan); }
+    .code .s { color: #a5b4fc; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-top: 0.5rem;
+    }
+    th, td {
+      border: 1px solid rgba(59, 130, 246, 0.15); padding: 0.45rem 0.5rem; text-align: left; vertical-align: top;
+    }
+    th {
+      background: rgba(59, 130, 246, 0.12); color: #e2e8f0; font-weight: 600;
+    }
+    tr:nth-child(even) td { background: rgba(139, 92, 246, 0.05); }
+    .note {
+      font-size: 0.72rem; color: var(--muted); border-left: 3px solid var(--purple);
+      padding-left: 0.65rem; margin-top: 0.6rem;
+    }
+    footer.site {
+      margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem;
+      align-items: center; font-size: 0.75rem; color: var(--muted);
+    }
+    footer.site a { color: var(--cyan); text-decoration: none; }
+    footer.site a:hover { text-decoration: underline; }
+    .pill {
+      display: inline-block; font-size: 0.65rem; padding: 0.15rem 0.4rem; border-radius: 4px;
+      background: rgba(6, 182, 212, 0.12); color: var(--cyan); margin-right: 0.25rem; margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="print-bar">
+      <button type="button" class="btn-print" onclick="window.print()">Print / Save PDF</button>
+    </div>
+
+    <header class="site">
+      <div class="brand">
+        <div class="brand-mark">SX</div>
+        <div>
+          <h1>SkillsXAI</h1>
+          <span>Developer resources</span>
+        </div>
+      </div>
+      <p class="doc-title">NVIDIA NIM — API shortcuts &amp; patterns</p>
+      <p class="doc-sub">
+        Reference for OpenAI-compatible chat completions on NVIDIA-hosted models. Model IDs and quotas change—verify in the
+        <a href="https://build.nvidia.com" style="color: var(--cyan);">NVIDIA Build</a> catalog before production.
+      </p>
+    </header>
+
+    <section class="block">
+      <h2><span class="tag">Overview</span> What is NVIDIA NIM?</h2>
+      <p>
+        <strong style="color: #e2e8f0;">NVIDIA NIM</strong> (NVIDIA Inference Microservices) exposes optimized LLM inference through
+        managed HTTP APIs. The <strong style="color: #e2e8f0;">cloud API</strong> commonly used by app developers follows an
+        OpenAI-compatible surface: <code class="mono">/v1/chat/completions</code>, so most SDKs that support a custom <code class="mono">base_url</code>
+        work with minimal changes.
+      </p>
+      <ul>
+        <li><strong style="color: #cbd5e1;">Self-host</strong> — Run NIM containers on your infra (Kubernetes, etc.) for private data boundaries.</li>
+        <li><strong style="color: #cbd5e1;">NVIDIA-hosted</strong> — Call integrate endpoints with an API key; pay-as-you-go billing in the NVIDIA ecosystem.</li>
+        <li><strong style="color: #cbd5e1;">Model catalog</strong> — Llama, Mistral, Nemotron, Mixtral, and domain-tuned variants appear in the catalog with versioned IDs.</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Models</span> Commonly listed families</h2>
+      <p>Examples of model <em>families</em> you will see (exact API strings are catalog-specific):</p>
+      <p>
+        <span class="pill">Meta Llama 3.x / 3.1 / 3.3</span>
+        <span class="pill">Mistral / Mixtrall</span>
+        <span class="pill">NVIDIA Nemotron</span>
+        <span class="pill">Microsoft Phi</span>
+        <span class="pill">Google Gemma</span>
+        <span class="pill">Qwen</span>
+        <span class="pill">Code-specific instruct</span>
+      </p>
+      <ul>
+        <li><strong style="color: #cbd5e1;">General chat &amp; RAG</strong> — Mid-size instruct models for latency-sensitive apps; large models for quality.</li>
+        <li><strong style="color: #cbd5e1;">Code &amp; agents</strong> — Code-instruct or long-context models for tool use and multi-step reasoning.</li>
+        <li><strong style="color: #cbd5e1;">Nemotron</strong> — NVIDIA’s line; strong for reasoning and enterprise-style workflows when available in your region.</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Endpoints</span> Patterns &amp; authentication</h2>
+      <p>Typical NVIDIA cloud chat API (verify in current docs):</p>
+      <div class="code mono">
+        <span class="k">POST</span> <span class="s">https://integrate.api.nvidia.com/v1/chat/completions</span><br />
+        <span class="k">Header:</span> Authorization: Bearer &lt;NVIDIA_API_KEY&gt;<br />
+        <span class="k">Header:</span> Content-Type: application/json
+      </div>
+      <p style="margin-top: 0.75rem;">Self-hosted NIM often exposes the same path on your base URL, e.g. <code class="mono">https://&lt;your-host&gt;/v1/chat/completions</code>.</p>
+      <div class="grid-2">
+        <div>
+          <p style="color: #cbd5e1; font-weight: 600; font-size: 0.8rem;">Environment</p>
+          <div class="code">export NVIDIA_API_KEY=<span class="s">"nvapi-..."</span></div>
+        </div>
+        <div>
+          <p style="color: #cbd5e1; font-weight: 600; font-size: 0.8rem;">Optional</p>
+          <p>Some flows use <code class="mono">base_url</code> in OpenAI SDK; set to integrate host without path duplication.</p>
+        </div>
+      </div>
+      <p class="note">Never commit keys. Use secrets managers (1Password, Vault, Vercel env, etc.) and rotate on leak suspicion.</p>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Python</span> OpenAI-compatible client</h2>
+      <div class="code mono">
+        <span class="k">import</span> os<br />
+        <span class="k">from</span> openai <span class="k">import</span> OpenAI<br />
+        <br />
+        client = OpenAI(<br />
+        &nbsp;&nbsp;base_url=<span class="s">"https://integrate.api.nvidia.com/v1"</span>,<br />
+        &nbsp;&nbsp;api_key=os.environ[<span class="s">"NVIDIA_API_KEY"</span>],<br />
+        )<br />
+        <br />
+        r = client.chat.completions.create(<br />
+        &nbsp;&nbsp;model=<span class="s">"meta/llama-3.1-8b-instruct"</span>,  <span class="k"># example — replace from catalog</span><br />
+        &nbsp;&nbsp;messages=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">"Summarize: ..."</span>}],<br />
+        &nbsp;&nbsp;max_tokens=512,<br />
+        &nbsp;&nbsp;temperature=0.3,<br />
+        )<br />
+        <span class="k">print</span>(r.choices[0].message.content)
+      </div>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">curl</span> Minimal request</h2>
+      <div class="code mono">
+        curl -sS <span class="s">"https://integrate.api.nvidia.com/v1/chat/completions"</span> \<br />
+        &nbsp;&nbsp;-H <span class="s">"Authorization: Bearer $NVIDIA_API_KEY"</span> \<br />
+        &nbsp;&nbsp;-H <span class="s">"Content-Type: application/json"</span> \<br />
+        &nbsp;&nbsp;-d <span class="s">'{</span><br />
+        &nbsp;&nbsp;<span class="s">  "model": "meta/llama-3.1-8b-instruct",</span><br />
+        &nbsp;&nbsp;<span class="s">  "messages": [{"role": "user", "content": "Hello!"}],</span><br />
+        &nbsp;&nbsp;<span class="s">  "max_tokens": 256,</span><br />
+        &nbsp;&nbsp;<span class="s">  "temperature": 0.2</span><br />
+        &nbsp;&nbsp;<span class="s">}'</span>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Table</span> Model comparison (illustrative)</h2>
+      <p>Replace with data from the catalog; columns help you pick by constraint.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Model tier</th>
+            <th>Context (typ.)</th>
+            <th>Latency</th>
+            <th>Price tier</th>
+            <th>Best for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">Small instruct (8B class)</td>
+            <td>~8k–128k (varies)</td>
+            <td>Low</td>
+            <td>Economy</td>
+            <td>Chatbots, classification, high QPS</td>
+          </tr>
+          <tr>
+            <td class="mono">Mid (e.g. 70B class)</td>
+            <td>~8k–128k</td>
+            <td>Medium</td>
+            <td>Standard</td>
+            <td>RAG, sales assist, long-form draft</td>
+          </tr>
+          <tr>
+            <td class="mono">Large / flagship</td>
+            <td>Often long</td>
+            <td>Higher</td>
+            <td>Premium</td>
+            <td>Complex reasoning, agent planning</td>
+          </tr>
+          <tr>
+            <td class="mono">Code-specialized</td>
+            <td>Varies</td>
+            <td>Low–med</td>
+            <td>Varies</td>
+            <td>IDE assistance, refactors, tests</td>
+          </tr>
+          <tr>
+            <td class="mono">Nemotron (when listed)</td>
+            <td>Varies</td>
+            <td>Med</td>
+            <td>Tiered</td>
+            <td>General + reasoning-style workloads</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Use cases</span> Where NIM fits</h2>
+      <ul>
+        <li><strong style="color: #cbd5e1;">Customer support</strong> — Ground answers with RAG; use smaller models for triage, larger for escalations.</li>
+        <li><strong style="color: #cbd5e1;">Internal copilots</strong> — Connect to docs &amp; tickets; log prompts/responses for audit if required.</li>
+        <li><strong style="color: #cbd5e1;">Code &amp; data</strong> — SQL/DSL generation with schema in context; validate outputs before execution.</li>
+        <li><strong style="color: #cbd5e1;">Batch &amp; async</strong> — Throttle to respect rate limits; use queues for back-office summarization.</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Practices</span> Production checklist</h2>
+      <ul>
+        <li><strong style="color: #cbd5e1;">Validate model id</strong> — Copy from Build; typos return 4xx with generic errors.</li>
+        <li><strong style="color: #cbd5e1;">Retries</strong> — Exponential backoff on 429/5xx; cap total wait time for UX-sensitive paths.</li>
+        <li><strong style="color: #cbd5e1;">Streaming</strong> — Use <code class="mono">stream: true</code> for chat UIs; aggregate tokens for logging.</li>
+        <li><strong style="color: #cbd5e1;">Safety</strong> — Add policy layers for PII, injection, and domain-specific guardrails; never trust tool output blindly.</li>
+        <li><strong style="color: #cbd5e1;">Cost</strong> — Log token usage per request; alert on anomalous spikes; prefer smaller models when quality permits.</li>
+        <li><strong style="color: #cbd5e1;">Testing</strong> — Snapshot golden prompts; regression-test after model version bumps.</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Body</span> Key JSON fields (OpenAI-compatible)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Role</th>
+            <th>Tip</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">model</td>
+            <td>Catalog string, e.g. <code class="mono">org/model-name</code></td>
+            <td>Pin versions in production; document upgrades in changelog.</td>
+          </tr>
+          <tr>
+            <td class="mono">messages</td>
+            <td>Array of <code class="mono">role</code> + <code class="mono">content</code></td>
+            <td>System first for global rules; user/assistant for multi-turn.</td>
+          </tr>
+          <tr>
+            <td class="mono">max_tokens</td>
+            <td>Output cap</td>
+            <td>Pair with prompt length; avoid huge caps on public endpoints.</td>
+          </tr>
+          <tr>
+            <td class="mono">temperature</td>
+            <td>0–2 (typ. 0–1)</td>
+            <td>↓ for factual/RAG, ↑ for creative; keep eval set fixed when tuning.</td>
+          </tr>
+          <tr>
+            <td class="mono">top_p</td>
+            <td>Nucleus sampling</td>
+            <td>Often set either <code class="mono">temperature</code> or <code class="mono">top_p</code>, not both aggressively.</td>
+          </tr>
+          <tr>
+            <td class="mono">stop</td>
+            <td>String or list</td>
+            <td>End generation at delimiters (e.g. <code class="mono">\n\nUSER:</code>).</td>
+          </tr>
+          <tr>
+            <td class="mono">stream</td>
+            <td>Boolean</td>
+            <td>Server-Sent Events line stream; handle partial deltas in UIs.</td>
+          </tr>
+          <tr>
+            <td class="mono">user</td>
+            <td>End-user id string</td>
+            <td>Helps abuse tracking; avoid raw PII—use stable pseudonymous ids.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">Response includes <code class="mono">usage.prompt_tokens</code> / <code class="mono">completion_tokens</code> for metering—log both for gross margin tracking.</p>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Multi-turn</span> System + history</h2>
+      <div class="code mono">
+        messages = [<br />
+        &nbsp;&nbsp;{<span class="s">"role"</span>: <span class="s">"system"</span>, <span class="s">"content"</span>: <span class="s">"You are a support agent for [PRODUCT]. Be concise. Cite only the KB."</span>},<br />
+        &nbsp;&nbsp;{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">"How do I reset my password?"</span>},<br />
+        &nbsp;&nbsp;{<span class="s">"role"</span>: <span class="s">"assistant"</span>, <span class="s">"content"</span>: <span class="s">"Open Settings → Security → Reset password."</span>},<br />
+        &nbsp;&nbsp;{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">"That button is missing in v2."</span>},<br />
+        ]
+      </div>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Stream</span> Python (OpenAI SDK)</h2>
+      <div class="code mono">
+        stream = client.chat.completions.create(<br />
+        &nbsp;&nbsp;model=<span class="s">"meta/llama-3.1-8b-instruct"</span>,<br />
+        &nbsp;&nbsp;messages=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">"Stream one sentence."</span>}],<br />
+        &nbsp;&nbsp;stream=<span class="k">True</span>,<br />
+        )<br />
+        <span class="k">for</span> chunk <span class="k">in</span> stream:<br />
+        &nbsp;&nbsp;t = chunk.choices[0].delta.content<br />
+        &nbsp;&nbsp;<span class="k">if</span> t:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">print</span>(t, end=<span class="s">""</span>, flush=<span class="k">True</span>)
+      </div>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">httpx</span> Async single-shot (optional)</h2>
+      <div class="code mono">
+        <span class="k">import</span> httpx, os, json<br />
+        <br />
+        url = <span class="s">"https://integrate.api.nvidia.com/v1/chat/completions"</span><br />
+        headers = {<span class="s">"Authorization"</span>: <span class="s">f"Bearer {os.environ['NVIDIA_API_KEY']}"</span>}<br />
+        body = {<br />
+        &nbsp;&nbsp;<span class="s">"model"</span>: <span class="s">"meta/llama-3.1-8b-instruct"</span>,<br />
+        &nbsp;&nbsp;<span class="s">"messages"</span>: [{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">"Ping"</span>}],<br />
+        &nbsp;&nbsp;<span class="s">"max_tokens"</span>: 64,<br />
+        }<br />
+        <span class="k">async</span> <span class="k">def</span> <span class="k">ask</span>():<br />
+        &nbsp;&nbsp;<span class="k">async</span> <span class="k">with</span> httpx.AsyncClient(timeout=60) <span class="k">as</span> c:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;r = <span class="k">await</span> c.post(url, headers=headers, json=body)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;r.raise_for_status()<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> r.json()[<span class="s">"choices"</span>][0][<span class="s">"message"</span>][<span class="s">"content"</span>]
+      </div>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">RAG</span> Prompt pattern</h2>
+      <p>Send retrieved chunks in the <strong style="color: #cbd5e1;">user</strong> or <strong style="color: #cbd5e1;">system</strong> message with clear delimiters. Ask the model to answer only from context and to say when unknown.</p>
+      <div class="code mono">
+        You are given CONTEXT blocks below. Answer using ONLY that text.<br />
+        If the answer is not in CONTEXT, say <span class="s">"I don't have that in the provided documents."</span><br />
+        <br />
+        CONTEXT:<br />
+        <span class="s">---</span><br />
+        {chunk_1}<br />
+        {chunk_2}<br />
+        <span class="s">---</span><br />
+        <br />
+        QUESTION: {user_query}
+      </div>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Map</span> Example model id shapes (verify live)</h2>
+      <p class="note">The Build catalog is authoritative. The patterns below are illustrative.</p>
+      <ul>
+        <li class="mono" style="color: #a5b4fc;">meta/llama-3.1-8b-instruct</li>
+        <li class="mono" style="color: #a5b4fc;">meta/llama-3.1-70b-instruct</li>
+        <li class="mono" style="color: #a5b4fc;">mistralai/mistral-7b-instruct-v0.2</li>
+        <li class="mono" style="color: #a5b4fc;">nvidia/llama-3.1-nemotron-70b-instruct</li>
+        <li class="mono" style="color: #a5b4fc;">mistralai/mixtral-8x7b-instruct</li>
+        <li class="mono" style="color: #a5b4fc;">Qwen models when listed in your region</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Errors</span> Quick diagnosis</h2>
+      <ul>
+        <li><code class="mono">401</code> — Key missing, wrong env, or expired; check header format <code class="mono">Bearer</code>.</li>
+        <li><code class="mono">404</code> — Wrong path or model not enabled for your account/region.</li>
+        <li><code class="mono">429</code> — Rate limit; reduce concurrency or request quota increase.</li>
+        <li><code class="mono">5xx</code> — Upstream; retry with backoff; surface friendly UI message.</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2><span class="tag">Glossary</span> Terms</h2>
+      <ul>
+        <li><strong style="color: #cbd5e1;">NIM</strong> — Microservice packaging for one model; may run on your cluster or be consumed as SaaS via APIs.</li>
+        <li><strong style="color: #cbd5e1;">integrate host</strong> — Public NVIDIA API gateway for many cloud-hosted models (path usually <code class="mono">/v1/...</code>).</li>
+        <li><strong style="color: #cbd5e1;">NVIDIA API key</strong> — Create in NVIDIA account; scope access to your billing and enabled endpoints.</li>
+        <li><strong style="color: #cbd5e1;">Instruct</strong> — Model variant tuned to follow user/system instructions; prefer over base for applications.</li>
+      </ul>
+    </section>
+
+    <footer class="site">
+      <span>&copy; 2026 SkillsXAI. Educational reference; not affiliated with NVIDIA.</span>
+      <a href="https://skillsxai.com">skillsxai.com</a>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI &amp; Generative AI — SkillsXAI Cheat Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      .no-print { display: none !important; }
+      body { background: #0a0f1a !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#0a0f1a;color:#e2e8f0;font-family:Inter,system-ui,sans-serif;font-size:11px;line-height:1.45;min-height:100vh;">
+
+  <!-- Header -->
+  <header style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);border-bottom:1px solid #1e3a5f;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#06b6d4);display:inline-block;flex-shrink:0;"></span>
+      <h1 style="margin:0;font-size:1.15rem;font-weight:700;letter-spacing:-0.02em;background:linear-gradient(90deg,#3b82f6,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">SkillsXAI</h1>
+      <span style="color:#64748b;font-weight:500;font-size:0.8rem;">AI &amp; Generative AI Cheat Sheet</span>
+    </div>
+    <button type="button" class="no-print" onclick="window.print()" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-family:inherit;font-size:0.8rem;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(59,130,246,0.35);">Print / Save PDF</button>
+  </header>
+
+  <main style="max-width:900px;margin:0 auto;padding:20px 24px 32px;">
+
+    <div style="margin-bottom:18px;padding:12px 14px;border-radius:10px;border:1px solid #1e3a5f;background:linear-gradient(135deg,rgba(15,23,42,0.8),rgba(30,27,75,0.4));">
+      <p style="margin:0 0 6px;font-size:0.65rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8b5cf6;">At a glance</p>
+      <p style="margin:0;color:#94a3b8;font-size:10.5px;">One-page map of <strong style="color:#e2e8f0;">core concepts</strong> used in product ML, LLM features, and GenAI system design. Pair with your vendor’s model cards, pricing, and ToS. Terms like “GPT / Claude / Gemini / Llama” are <em>families of models</em> that evolve; always check current capabilities.</p>
+    </div>
+
+    <!-- Section 1 -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#1d4ed8 0%,#3b82f6 40%,#06b6d4 100%);">1. AI Fundamentals</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;">Core branches of modern AI: how <em>data, objectives, and architecture</em> connect to the task (classify, predict, generate, plan).</p>
+        <div style="display:grid;grid-template-columns:1fr;gap:10px;">
+          <div style="border:1px solid #334155;border-radius:8px;padding:10px 12px;background:#0a0f1a;">
+            <strong style="color:#3b82f6;">Machine Learning (ML)</strong>
+            <p style="margin:6px 0 0;color:#cbd5e1;">Learn <em>functions from data</em> so the program improves with examples. Types: <strong>supervised</strong> (labeled pairs), <strong>unsupervised</strong> (structure/density), <strong>semi-supervised</strong>, and <strong>reinforcement</strong> (trial + reward). Distinct from rule engines: generalization, not if/else hand-tuning at scale.</p>
+          </div>
+          <div style="border:1px solid #334155;border-radius:8px;padding:10px 12px;background:#0a0f1a;">
+            <strong style="color:#06b6d4;">Deep Learning (DL)</strong>
+            <p style="margin:6px 0 0;color:#cbd5e1;">ML with <em>stacked parametric layers</em> (neurons with weights). <strong>Backpropagation</strong> + optimizers (Adam, SGD) minimize a loss. Needs data volume and compute; <strong>overfitting</strong> is when the model memorizes training noise—combat with regularization, more data, dropout, early stopping, better validation design.</p>
+          </div>
+          <div style="border:1px solid #334155;border-radius:8px;padding:10px 12px;background:#0a0f1a;">
+            <strong style="color:#8b5cf6;">Natural Language Processing (NLP)</strong>
+            <p style="margin:6px 0 0;color:#cbd5e1;">Text-centric tasks: classification, NER, QA, translation, summarization, dialogue. <strong>LLMs</strong> unify many of these with a single generate-next-token head plus prompting. Classical pipelines used token features + linear models; today <strong>embeddings + transformers</strong> dominate.</p>
+          </div>
+          <div style="border:1px solid #334155;border-radius:8px;padding:10px 12px;background:#0a0f1a;">
+            <strong style="color:#a78bfa;">Computer Vision (CV)</strong>
+            <p style="margin:6px 0 0;color:#cbd5e1;">Pixels → semantics: <em>classification, detection, segmentation, OCR, depth, pose, video</em>. CNNs were standard; <strong>Vision Transformers (ViT)</strong> and <strong>multimodal LLMs</strong> map images to a shared space with language for captioning, VQA, and agents that “see.”</p>
+          </div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:10.5px;">
+          <thead>
+            <tr style="background:linear-gradient(90deg,#1e3a5f,#312e81);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0e7ff;">Paradigm</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0e7ff;">You provide</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0e7ff;">Model learns</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:6px 10px;border:1px solid #334155;color:#3b82f6;">Supervised</td><td style="padding:6px 10px;border:1px solid #334155;">Labeled (x → y) pairs</td><td style="padding:6px 10px;border:1px solid #334155;">Regressor, classifier, seq2seq</td></tr>
+            <tr style="background:rgba(15,23,42,0.5);"><td style="padding:6px 10px;border:1px solid #334155;color:#06b6d4;">Unsupervised</td><td style="padding:6px 10px;border:1px solid #334155;">Unlabeled data</td><td style="padding:6px 10px;border:1px solid #334155;">Clustering, topic models, VAE, SSL pretext</td></tr>
+            <tr><td style="padding:6px 10px;border:1px solid #334155;color:#8b5cf6;">Reinforcement (RL)</td><td style="padding:6px 10px;border:1px solid #334155;">MDP, actions, reward signal</td><td style="padding:6px 10px;border:1px solid #334155;">Policy to maximize return (used in some LLM “preference” training)</td></tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 6px;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#64748b;">Model lifecycle &amp; evaluation (quick ref)</p>
+        <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
+          <tbody>
+            <tr style="background:rgba(15,23,42,0.4);">
+              <td style="padding:6px 10px;border:1px solid #334155;width:24%;color:#3b82f6;font-weight:600;">Split</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Train / validation / <strong>holdout test</strong> (never tune on test). For time series, no random shuffle across time without care.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#06b6d4;font-weight:600;">Metrics</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;"><strong>Classification:</strong> precision, recall, F1, ROC-AUC, calibration. <strong>Regression:</strong> MAE, RMSE, R². <strong>Imbalanced data:</strong> don’t fixate on accuracy.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.4);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">Generative eval</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">LLMs: win rates (human/LLM judge with caveats), task-specific gold sets, safety checks, <strong>latency + cost</strong> per good answer.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#7c3aed 0%,#8b5cf6 50%,#3b82f6 100%);">2. Generative AI Models</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;">Foundation models: pretrained at scale, then specialized (instruction tuning, tools, fine-tune, adapters). <strong>“Open weight”</strong> ≠ “open data”—check licenses (Llama, Mistral) vs. closed API-only (frontier hosted).</p>
+        <ul style="margin:0;padding:0;list-style:none;">
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1e293b;align-items:flex-start;">
+            <span style="min-width:72px;font-weight:600;color:#3b82f6;">GPT</span>
+            <span style="color:#cbd5e1;">OpenAI <strong>G</strong>enerative <strong>P</strong>retrained <strong>T</strong>ransformer. Broad ecosystem: function calling, structured outputs, vision where offered. Compare by <em>version string</em>, not “GPT” alone—capabilities shift per release.</span>
+          </li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1e293b;align-items:flex-start;">
+            <span style="min-width:72px;font-weight:600;color:#06b6d4;">Claude</span>
+            <span style="color:#cbd5e1;">Anthropic. Often chosen for <strong>long context</strong>, nuanced refusals, and coding. Multimodal tiers vary; align pricing with <span style="color:#a78bfa;">input vs output</span> token mix.</span>
+          </li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1e293b;align-items:flex-start;">
+            <span style="min-width:72px;font-weight:600;color:#8b5cf6;">Gemini</span>
+            <span style="color:#cbd5e1;">Google: consumer API vs <strong>Vertex AI</strong> (enterprise controls). Strong multimodal story; “grounding” to Search where supported—understand freshness and what is actually retrieved.</span>
+          </li>
+          <li style="display:flex;gap:10px;padding:8px 0;align-items:flex-start;">
+            <span style="min-width:72px;font-weight:600;color:#a78bfa;">Llama</span>
+            <span style="color:#cbd5e1;">Meta open-weight stack for <strong>self-host</strong>, on-device, distillation, or LoRA fine-tune. You own ops: GPUs, vLLM/TGI, safety filters, and compliance.</span>
+          </li>
+        </ul>
+        <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:10.5px;">
+          <thead>
+            <tr style="background:linear-gradient(90deg,#312e81,#1e3a5f);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0e7ff;">Modality family</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0e7ff;">Examples / notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#3b82f6;font-weight:600;">Text LLMs</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Chat, code, tool agents, translation. Dominant commercial interface is token-metered API.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#06b6d4;font-weight:600;">Image gen</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Diffusion models (DALL·E, SD, Imagen, FLUX), editing (inpaint), style control, LoRAs, safety/NSFW policies.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">Audio / speech</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">ASR (Whisper-class), TTS, music—watch licensing for voices and music.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#a78bfa;font-weight:600;">Video &amp; 3D</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Emerging, compute-heavy, higher abuse risk—governance and watermarking are active areas.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;padding:8px 12px;border-left:3px solid #3b82f6;background:#0a0f1a;border-radius:0 6px 6px 0;color:#94a3b8;font-size:10.5px;"><strong style="color:#e2e8f0;">Tip:</strong> Pin <em>model name + version + region</em>, set temperature/top-p defaults per use case (creative vs deterministic), and log prompts/responses with policy-compliant redaction.</p>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#0369a1 0%,#06b6d4 45%,#3b82f6 100%);">3. Transformer Architecture</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;"><strong>Attention is all you need (2017):</strong> replace recurrent recurrence with <em>parallelizable</em> attention—why LLMs scale on GPUs. Most chat models are <strong>decoder-only</strong> (GPT-style); T5/encoder–decoder is still used in some non-chat pipelines.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
+          <thead>
+            <tr style="background:linear-gradient(90deg,#0c4a6e,#1e3a5f);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#cffafe;">Concept</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#cffafe;">What it is</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#3b82f6;font-weight:600;white-space:nowrap;">Self-attention</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">For each token, score compatibility with <em>every</em> token, softmax weights, value mixture. <strong>Scaled</strong> dot-product stabilizes gradients.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#06b6d4;font-weight:600;">Multi-head</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Many parallel heads → diverse relation types; projected and merged. <strong>Grouped-query attention (GQA)</strong> in some LLMs reduces KV memory.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">Tokens</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Subword pieces (BPE, SentencePiece, WordPiece). Long words become multiple tokens. Use vendor tokenizers; don’t guess “word count = tokens.”</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#a78bfa;font-weight:600;">Embeddings</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Token → vector lookup + positional info. <strong>Sentence / passage embeddings</strong> for retrieval are often a separate <em>encoder</em> or layer.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#3b82f6;font-weight:600;">Positional</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Absolute, relative, or <strong>RoPE</strong> (rotary) so position affects attention scores sensibly in long context.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#06b6d4;font-weight:600;">KV cache</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">At decode time, cache keys/values for past tokens to avoid O(n²) recompute on prefix—critical for <strong>inference cost</strong> and long chats.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">Pretrain → align</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Causal next-token (pretrain) → SFT (instruction) → <strong>RLHF / DPO / RLAIF</strong> (preferences) for helpfulness and policy compliance.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;color:#94a3b8;font-size:10.5px;">Inference knobs (vendor-specific): <strong style="color:#e2e8f0;">temperature</strong> (diversity), <strong style="color:#e2e8f0;">top-p / top-k</strong> (truncate tail), <strong style="color:#e2e8f0;">max output tokens</strong>, and <strong>stop sequences</strong>. “Reasoning” models may chain internal steps; expose user-visible only what you need.</p>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#c026d3 0%,#8b5cf6 100%);">4. Prompt Engineering Basics</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;">Good prompts: clear role, success criteria, format, edge cases, and (when needed) <em>grounding</em> context. Test with realistic inputs, not toy sentences.</p>
+        <div style="display:grid;grid-template-columns:1fr;gap:8px;">
+          <div style="border:1px solid #334155;border-radius:8px;overflow:hidden;">
+            <div style="padding:6px 10px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;background:linear-gradient(90deg,#1e3a5f,#3b82f6);color:#fff;">Zero-shot</div>
+            <div style="padding:8px 10px;background:#0a0f1a;color:#cbd5e1;">Instruction only. Works when task is standard and the model can infer format. <strong>Ask for a schema</strong> (e.g. JSON with keys) to reduce shape errors.</div>
+          </div>
+          <div style="border:1px solid #334155;border-radius:8px;overflow:hidden;">
+            <div style="padding:6px 10px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;background:linear-gradient(90deg,#155e75,#06b6d4);color:#fff;">Few-shot (in-context)</div>
+            <div style="padding:8px 10px;background:#0a0f1a;color:#cbd5e1;">Show examples (input → output) to lock down format and nuance. Cost/latency rise with size; <strong>choose diverse exemplars</strong> over duplicates.</div>
+          </div>
+          <div style="border:1px solid #334155;border-radius:8px;overflow:hidden;">
+            <div style="padding:6px 10px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;background:linear-gradient(90deg,#4c1d95,#8b5cf6);color:#fff;">Chain-of-thought (CoT)</div>
+            <div style="padding:8px 10px;background:#0a0f1a;color:#cbd5e1;">Explicit intermediate steps before the answer—helps arithmetic, logic, planning. Beware: longer CoT = more tokens; for production, <strong>validate final answer</strong> (code exec, tool check) when possible.</div>
+          </div>
+        </div>
+        <p style="margin:12px 0 6px;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#64748b;">More techniques</p>
+        <ul style="margin:0;padding-left:18px;color:#cbd5e1;font-size:10.5px;">
+          <li style="margin-bottom:4px;"><strong style="color:#3b82f6;">System vs user delimiters</strong> — keep durable rules in system (or “developer”) if your platform supports it; put volatile data in user turns.</li>
+          <li style="margin-bottom:4px;"><strong style="color:#06b6d4;">Role prompting</strong> — “You are a careful financial analyst; cite line items when uncertain” sets tone and risk posture.</li>
+          <li style="margin-bottom:4px;"><strong style="color:#8b5cf6;">Tool / function calling</strong> — let the model emit structured <code style="color:#22d3ee;">function</code> calls for APIs, not paste secrets into prose.</li>
+          <li style="margin-bottom:4px;"><strong style="color:#a78bfa;">ReAct-style</strong> — interleave <em>thought → action (tool) → observation</em> in agent loops; cap iterations to avoid runaway cost.</li>
+          <li><strong style="color:#3b82f6;">Self-consistency / voting</strong> — sample N CoT answers, majority vote on multiple-choice—expensive but robust for some benchmarks (not all prod paths).</li>
+        </ul>
+        <p style="margin:12px 0 0;color:#94a3b8;font-size:10.5px;"><strong style="color:#e2e8f0;">Quick pattern:</strong> <span style="color:#94a3b8;">(1) Goal</span> → <span style="color:#94a3b8;">(2) Context</span> → <span style="color:#94a3b8;">(3) Rules</span> → <span style="color:#94a3b8;">(4) Output format</span> → <span style="color:#94a3b8;">(5) Question</span>. Repeat the output contract at the end of long inputs.</p>
+      </div>
+    </section>
+
+    <!-- Section 5 -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#1d4ed8 0%,#0ea5e9 100%);">5. AI APIs &amp; Integration</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;">You’re not just “HTTP to a model”—operational concerns: org boundaries, <strong>quotas, batch vs sync</strong>, data handling, and regional deployment.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
+          <thead>
+            <tr style="background:linear-gradient(90deg,#1e3a5f,#0c4a6e);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0f2fe;">Provider</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0f2fe;">Highlights</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#3b82f6;font-weight:600;vertical-align:top;">OpenAI</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Chat Completions / Responses; Assistants (threads, files); <code style="color:#22d3ee;">embeddings</code>; <strong>realtime</strong> and batch endpoints where available. Function calling with JSON schema.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#06b6d4;font-weight:600;vertical-align:top;">Anthropic</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Messages API; <strong>long context</strong> tiers; tool use. SDKs designed for tool orchestration. Compare prompt caching features vs plain replay.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#8b5cf6;font-weight:600;vertical-align:top;">Google AI Studio / Vertex</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Consumer-friendly Studio vs <strong>Vertex</strong> (Cloud IAM, VPC-SC, enterprise SLAs). Grounding, batch predict, and multimodal inputs vary by model.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 6px;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#64748b;">Integration checklist</p>
+        <ul style="margin:0 0 12px;padding-left:18px;color:#94a3b8;font-size:10.5px;">
+          <li style="margin-bottom:4px;"><strong style="color:#e2e8f0;">Auth &amp; secrets</strong> — server-side only; use secret managers, rotate keys, separate dev/stage/prod.</li>
+          <li style="margin-bottom:4px;"><strong style="color:#e2e8f0;">Retries</strong> — exponential backoff for 429/5xx; respect <code style="color:#22d3ee;">Retry-After</code> when present; unique idempotency keys for user-visible effects.</li>
+          <li style="margin-bottom:4px;"><strong style="color:#e2e8f0;">Streaming</strong> — token SSE for chat UX; if you must log, apply redaction/PII rules first.</li>
+          <li style="margin-bottom:4px;"><strong style="color:#e2e8f0;">Guardrails</strong> — pre-filter inputs (injection, PII) and post-filter outputs; blocklists are brittle alone—layer defense.</li>
+          <li><strong style="color:#e2e8f0;">Cost controls</strong> — max output tokens, model tier per route, <strong>monthly org caps</strong>, kill switches, abuse rate limits on public endpoints.</li>
+        </ul>
+        <p style="margin:0;padding:8px 10px;border-radius:8px;border:1px dashed #334155;background:#0a0f1a;color:#94a3b8;font-size:10.5px;"><strong style="color:#06b6d4;">Prompt injection:</strong> treat untrusted user text as data, not as instructions, when the model also sees <em>tool results</em> or system prompts—use structured boundaries and least-privilege tool scopes.</p>
+      </div>
+    </section>
+
+    <!-- Section 6 -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#5b21b6 0%,#06b6d4 100%);">6. RAG &amp; Vector Databases</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;"><strong style="color:#e2e8f0;">RAG</strong> = retrieve evidence → <em>constrain</em> generation. Good when the knowledge is in <strong>docs you control</strong> and changes often (policies, SKUs) vs. static pretraining cutoffs.</p>
+        <ol style="margin:0 0 12px;padding-left:20px;color:#cbd5e1;">
+          <li style="margin-bottom:4px;">Ingest: parse PDFs/HTML; normalize tables; tag with tenant and ACLs.</li>
+          <li style="margin-bottom:4px;">Chunk: 256–1024 token windows common; <strong>overlap</strong> to avoid cut mid-sentence; keep headings in chunk metadata for provenance.</li>
+          <li style="margin-bottom:4px;">Index: <strong>embeddings</strong> (same model for query &amp; index); add keyword/BM25 for <em>hybrid</em> if exact SKUs/IDs matter.</li>
+          <li style="margin-bottom:4px;">Query: expand query, retrieve top-k, optionally <strong>rerank</strong> (cross-encoder) before prompt assembly.</li>
+          <li>Generate: policy prompt + “answer only from context; say if unknown,” with citations to chunk IDs for audit.</li>
+        </ol>
+        <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
+          <thead>
+            <tr style="background:linear-gradient(90deg,#312e81,#0e7490);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0e7ff;">Topic</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#e0e7ff;">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#3b82f6;font-weight:600;">Embeddings</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">If you switch embedding models, <strong>reindex everything</strong>. Dimensions and distance (cosine vs IP) must match the DB.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#06b6d4;font-weight:600;">Vector DBs</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">Pinecone, Weaviate, Qdrant, Milvus, Chroma, <strong>pgvector</strong> in Postgres, etc. Need filters? Pick something with rich metadata and composite indexes.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">ANN search</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">HNSW, IVF, PQ: tune recall vs QPS. High volume → batch embedding jobs; <strong>async refresh</strong> when docs change.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#a78bfa;font-weight:600;">Failure modes</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;">“Wrong chunk retrieved” → wrong answers confidently. Mitigate: better chunking, <strong>rerankers</strong>, ask-back questions, user-visible citations, eval suite on your own docs.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;color:#94a3b8;font-size:10.5px;">When to fine-tune vs RAG: <strong style="color:#e2e8f0;">RAG</strong> for updatable knowledge; <strong style="color:#e2e8f0;">SFT/LoRA</strong> for consistent style, format, or domain phrasing; often use <em>both</em>.</p>
+      </div>
+    </section>
+
+    <!-- Section 7 -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#7f1d1d 0%,#7c3aed 50%,#0e7490 100%);">7. Responsible AI</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;">Proportionality: match controls to <em>harms and stakes</em>. A draft email assistant ≠ medical triage; scope your governance accordingly.</p>
+        <ul style="margin:0;padding:0;list-style:none;">
+          <li style="padding:8px 0;border-bottom:1px solid #1e293b;">
+            <strong style="color:#f87171;">Bias &amp; fairness</strong>
+            <span style="color:#cbd5e1;"> — Measure slice metrics (region, language, user cohort). <strong>Representation bias</strong> in data propagates. Avoid “fix in prompt only” for systemic gaps—collect targeted eval sets and involve domain experts.</span>
+          </li>
+          <li style="padding:8px 0;border-bottom:1px solid #1e293b;">
+            <strong style="color:#fbbf24;">Safety &amp; misuse</strong>
+            <span style="color:#cbd5e1;"> — Classifier layers, allowlists, abuse detection, and policy enforcement. Red-team new surfaces (uploads, tool calls). <strong>Hallucination</strong> is an epistemic risk, not a moral one—treat with UX (cites, confidence, human review).</span>
+          </li>
+          <li style="padding:8px 0;border-bottom:1px solid #1e293b;">
+            <strong style="color:#34d399;">Privacy &amp; data rights</strong>
+            <span style="color:#cbd5e1;"> — Minimize PII, encrypt at rest/in transit, DPA with vendors, regional routing. Be explicit about <strong>retention, training use</strong>, and user controls (opt-out) per policy.</span>
+          </li>
+          <li style="padding:8px 0;border-bottom:1px solid #1e293b;">
+            <strong style="color:#60a5fa;">Accountability &amp; transparency</strong>
+            <span style="color:#cbd5e1;"> — Model name/version in logs, change logs for prompts, incident runbooks, who owns override decisions. RAG: surface sources to users; don’t overclaim “our AI thinks.”</span>
+          </li>
+          <li style="padding:8px 0;">
+            <strong style="color:#a78bfa;">Environmental &amp; cost ethics</strong>
+            <span style="color:#cbd5e1;"> — Bigger model ≠ always better. Right-size, cache, batch, and design flows that don’t autogenerate on every keystroke for sustainability and bills.</span>
+          </li>
+        </ul>
+        <p style="margin:12px 0 0;padding:8px 12px;border-radius:8px;border:1px solid #334155;background:#0a0f1a;color:#94a3b8;font-size:10.5px;">Responsible AI is <em>operational</em>: pre-release <strong>eval</strong> + in-prod <strong>monitoring</strong> (drift, spikes in refusals, toxic outputs) + regular red-teaming after model upgrades.</p>
+        <p style="margin:12px 0 0;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#64748b;">Ship checklist (high level)</p>
+        <ol style="margin:8px 0 0;padding-left:20px;color:#94a3b8;font-size:10.5px;">
+          <li style="margin-bottom:4px;">Define the <strong style="color:#e2e8f0;">decision</strong> the software makes vs what stays human (especially legal/medical/financial).</li>
+          <li style="margin-bottom:4px;">Build a <strong style="color:#e2e8f0;">test matrix</strong>: happy paths, edge cases, adversarial inputs, multilingual if relevant.</li>
+          <li style="margin-bottom:4px;">Document <strong style="color:#e2e8f0;">data flow</strong>: what is sent to third-party APIs, where it is stored, and retention length.</li>
+          <li style="margin-bottom:4px;">Create <strong style="color:#e2e8f0;">rollback</strong> for model/prompt changes; keep prior versions addressable in logs.</li>
+          <li>Review <strong style="color:#e2e8f0;">access control</strong> for RAG corpora: retrieval must respect the same per-user permissions as source systems.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- System design & troubleshooting -->
+    <section style="margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#14532d 0%,#0e7490 50%,#1d4ed8 100%);">System design &amp; troubleshooting</h2>
+      <div style="padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#94a3b8;">Patterns for shipping LLM features: <strong>when something breaks</strong>, narrow whether it is retrieval, model capability, tool wiring, or policy—not “the AI is bad” generically.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:10px;">
+          <thead>
+            <tr style="background:linear-gradient(90deg,#1e3a5f,#14532d);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#d1fae5;">Smell</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#d1fae5;">Likely cause</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid #334155;color:#d1fae5;">What to try</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#f87171;vertical-align:top;">Confident but wrong on facts</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Hallucination, stale prior, no grounding.</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">RAG with citations, lower temperature, ask model to list uncertainty, block critical claims without a tool check.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#fbbf24;vertical-align:top;">Refuses too often / too rarely</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">System prompt, safety classifiers, or policy misalignment to use case.</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Separate <em>internal</em> vs <em>user-facing</em> system instructions; add domain-specific allowlists; log refusal codes.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#60a5fa;vertical-align:top;">Omitting key doc sections</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Chunking splits tables; wrong top-k; embedding mismatch to query type.</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Parent-child chunks, title-aware splits, query expansion, hybrid search, reranker after ANN.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:6px 10px;border:1px solid #334155;color:#a78bfa;vertical-align:top;">Intermittent tool errors</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Unvalidated JSON, schema drift, unhandled API errors, timeouts.</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Validate tool args with a schema, mirror OpenAPI, circuit-break, surface errors back to the model in &lt;observation&gt; fields.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#34d399;vertical-align:top;">Cost spikes / slow UX</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Oversized contexts, N-shot bloat, repeated system prompt, wrong model tier.</td>
+              <td style="padding:6px 10px;border:1px solid #334155;color:#cbd5e1;vertical-align:top;">Prompt caching, trim history, cache embeddings, use smaller model for triage, batch offline jobs.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:0;font-size:10.5px;color:#94a3b8;">Observability: log <strong style="color:#e2e8f0;">trace IDs</strong> from UI → retriever → LLM → tools; store prompt hash + model + params for reproducible debugging. Never log raw PII in shared analytics without policy.</p>
+      </div>
+    </section>
+
+    <!-- Reference strip -->
+    <section style="margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid #1e293b;background:#0f172a42;">
+      <h2 style="margin:0;padding:12px 16px;font-size:0.9rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#0f172a 0%,#1e3a5f 50%,#312e81 100%);">Reference — acronyms &amp; one-liners</h2>
+      <div style="padding:12px 16px;">
+        <table style="width:100%;border-collapse:collapse;font-size:10px;">
+          <tbody>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#3b82f6;font-weight:600;width:20%;">LLM</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Large language model—usually decoder-only transformer trained to predict the next token.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#06b6d4;font-weight:600;">SFT</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Supervised fine-tuning on instruction/answer pairs to teach format and “assistant behavior.”</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">RLHF</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Reinforcement learning from human feedback—trains a reward or policy from preference rankings.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#a78bfa;font-weight:600;">DPO / RLAIF</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Preference learning alternatives (direct preference optimization, AI-labeled feedback) to align models.</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#3b82f6;font-weight:600;">RAG</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Retrieval augmented generation: fetch docs → add to context → answer with grounding.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#06b6d4;font-weight:600;">LoRA</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Low-rank adaptation—small trainable adapter matrices; efficient fine-tuning of large models.</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">GQA</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Grouped-query attention—share KV across heads to cut memory in long sequences.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#a78bfa;font-weight:600;">ANN / HNSW</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Approximate nearest neighbor search; HNSW is a common graph index for vectors.</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#3b82f6;font-weight:600;">SSE</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Server-Sent Events—one-way server→browser stream; many LLM HTTP APIs use SSE for token-by-token output.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#06b6d4;font-weight:600;">PII / GDPR</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Personally identifiable information; European privacy regulation—design controls, not just disclaimers.</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">OCR / ASR / TTS</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Optical character recognition; automatic speech recognition; text-to-speech—typical I/O for multimodal stacks.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#a78bfa;font-weight:600;">SLA / SLO</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Service-level agreement vs objective—set latency/error budgets for AI features with human fallback when breached.</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#3b82f6;font-weight:600;">A/B or bandit</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Run prompt/model changes behind experiments; measure business metrics, not only perplexity or bench scores.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#06b6d4;font-weight:600;">MLOps / LLMOps</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Operational discipline for model lifecycle: data versioning, eval registries, prompt/version promotion, and rollback.</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#8b5cf6;font-weight:600;">NLP / NLU / NLG</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Natural language processing / understanding (intent, entities) / generation (surface text from meaning).</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#a78bfa;font-weight:600;">MoE</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Mixture of experts—routes tokens to subnetworks; increases capacity without every parameter firing each forward pass.</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid #334155;color:#3b82f6;font-weight:600;">CWE / STRIDE</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Vulnerability and threat models—map AI features (RAG, tools, file uploads) to known abuse and injection classes.</td></tr>
+            <tr style="background:rgba(15,23,42,0.45);"><td style="padding:4px 8px;border:1px solid #334155;color:#06b6d4;font-weight:600;">Tokens / TPM</td><td style="padding:4px 8px;border:1px solid #334155;color:#cbd5e1;">Billing units; tokens-per-minute (or concurrent request) <strong>rate limits</strong> on APIs—architect for backoff and sharding.</td></tr>
+          </tbody>
+        </table>
+        <p style="margin:10px 0 0;font-size:10px;color:#64748b;">Myths: “bigger context removes need for RAG” (retrieval still wins on precision); “zero temperature is always right” (some tasks need diversity); “the model read my whole PDF” (only what you pass in the window).</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer style="border-top:1px solid #1e3a5f;padding:16px 24px;background:linear-gradient(180deg,#0a0f1a 0%,#0f172a 100%);text-align:center;">
+    <p style="margin:0 0 6px;font-size:0.8rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:linear-gradient(90deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">SkillsXAI</p>
+    <p style="margin:0 0 4px;font-size:0.7rem;color:#64748b;">AI &amp; Generative AI essentials · Educational reference</p>
+    <p style="margin:0;font-size:0.65rem;color:#475569;max-width:640px;margin-left:auto;margin-right:auto;">This sheet summarizes common concepts; model capabilities, terms of service, and security guidance change. For production, follow vendor model cards, data processing agreements, and your organization’s compliance requirements.</p>
+  </footer>
+
+</body>
+</html>

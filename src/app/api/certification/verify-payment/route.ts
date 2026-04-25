@@ -20,24 +20,23 @@ function getSupabaseClient() {
   return createClient(url, key)
 }
 
-const MC_SKILLS = ['Artificial Intelligence', 'Prompt Engineering', 'AI Agents & Automation', 'AI Tools & APIs']
-
-async function sendCertificateEmail(name: string, email: string) {
+async function sendCertificateEmail(name: string, email: string, courseTitle: string, skills: string[], courseSlug: string, courseDescription?: string) {
   if (!RESEND_API_KEY || !name || !email) return
   const { Resend } = await import('resend')
   const resend = new Resend(RESEND_API_KEY)
 
-  const saved = await saveCertToNeon(name, email, 'ai-masterclass', MC_SKILLS)
+  const saved = await saveCertToNeon(name, email, courseSlug, skills)
   const certId = saved?.certId || `SKX-MC-${Date.now().toString(36).toUpperCase()}`
   const dateStr = saved?.issuedAt || new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
   const certUrl = saved?.certUrl || `https://skillsxai.com/certificatedownload/${certId}`
 
-  const certHtml = generateCertHTML(name, certId, dateStr)
-  const emailHtml = generateEmailHTML(name, certId, dateStr, certUrl)
+  const certOpts = { courseTitle, skills, courseDescription }
+  const certHtml = generateCertHTML(name, certId, dateStr, certUrl, certOpts)
+  const emailHtml = generateEmailHTML(name, certId, dateStr, certUrl, certOpts)
   await resend.emails.send({
     from: 'SkillsXAI <certificates@team.skillsxai.com>',
     to: email,
-    subject: `Your AI Masterclass Certificate — ${name} | SkillsXAI`,
+    subject: `Your ${courseTitle} Certificate — ${name} | SkillsXAI`,
     html: emailHtml,
     attachments: [{ filename: `SkillsXAI-Certificate-${name.replace(/\s+/g, '-')}.html`, content: Buffer.from(certHtml, 'utf-8'), contentType: 'text/html' }],
   })
@@ -46,7 +45,7 @@ async function sendCertificateEmail(name: string, email: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { orderId, utr, name, email, phone } = body
+    const { orderId, utr, name, email, phone, course, courseTitle, skills, courseDescription } = body
 
     if (!orderId || typeof orderId !== 'string') {
       return NextResponse.json({ error: 'orderId is required' }, { status: 400 })
@@ -54,6 +53,10 @@ export async function POST(req: NextRequest) {
     if (!utr || typeof utr !== 'string') {
       return NextResponse.json({ error: 'Transaction ID (UTR) is required' }, { status: 400 })
     }
+
+    const courseSlug = typeof course === 'string' ? course : 'ai-masterclass'
+    const certSkills = Array.isArray(skills) ? skills : ['Artificial Intelligence', 'Prompt Engineering', 'AI Agents & Automation', 'AI Tools & APIs']
+    const title = typeof courseTitle === 'string' ? courseTitle : 'AI Masterclass'
 
     if (!PAYTM_MID || !PAYTM_MERCHANT_KEY) {
       const supabase = getSupabaseClient()
@@ -68,17 +71,17 @@ export async function POST(req: NextRequest) {
           paytm_status: 'UNVERIFIED',
           paytm_result_msg: 'Paytm credentials not configured — manual verification required',
           verified: false,
+          course: courseSlug,
         })
       }
 
-      await saveCertToNeon(name || '', email || '', 'ai-masterclass', MC_SKILLS)
+      await saveCertToNeon(name || '', email || '', courseSlug, certSkills)
 
       return NextResponse.json({
         success: true,
         verified: false,
         status: 'PENDING_MANUAL',
-        message:
-          'Payment recorded. Our team will verify and send your certificate within 24 hours.',
+        message: 'Payment recorded. Our team will verify and send your certificate within 24 hours.',
       })
     }
 
@@ -122,6 +125,7 @@ export async function POST(req: NextRequest) {
         bank_name: bankName || null,
         verified: isSuccess,
         verified_at: isSuccess ? new Date().toISOString() : null,
+        course: courseSlug,
       })
 
       if (isSuccess) {
@@ -129,12 +133,13 @@ export async function POST(req: NextRequest) {
           .from('masterclass_registrations')
           .update({ payment_status: 'verified' })
           .eq('email', email)
+          .eq('course', courseSlug)
       }
     }
 
     if (isSuccess) {
-      await saveCertToNeon(name, email, 'ai-masterclass', MC_SKILLS)
-      sendCertificateEmail(name, email).catch(() => {})
+      await saveCertToNeon(name, email, courseSlug, certSkills)
+      sendCertificateEmail(name, email, title, certSkills, courseSlug, typeof courseDescription === 'string' ? courseDescription : undefined).catch(() => {})
 
       return NextResponse.json({
         success: true,

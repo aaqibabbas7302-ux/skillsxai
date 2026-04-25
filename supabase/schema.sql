@@ -170,3 +170,10 @@ CREATE POLICY "Allow public insert on masterclass_certificates"
 CREATE POLICY "Allow public select on masterclass_certificates"
   ON masterclass_certificates FOR SELECT TO anon USING (true);
 CREATE INDEX IF NOT EXISTS idx_masterclass_cert_email ON masterclass_certificates(email);
+
+-- Add course column to support multi-course certifications
+ALTER TABLE masterclass_registrations ADD COLUMN IF NOT EXISTS course TEXT NOT NULL DEFAULT 'ai-masterclass';
+ALTER TABLE masterclass_payments ADD COLUMN IF NOT EXISTS course TEXT NOT NULL DEFAULT 'ai-masterclass';
+ALTER TABLE masterclass_certificates ADD COLUMN IF NOT EXISTS course TEXT NOT NULL DEFAULT 'ai-masterclass';
+CREATE INDEX IF NOT EXISTS idx_masterclass_reg_course ON masterclass_registrations(course);
+CREATE INDEX IF NOT EXISTS idx_masterclass_cert_course ON masterclass_certificates(course);

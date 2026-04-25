@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Website Prompts — 50+ Professional Templates (67) | SkillsXAI</title>
+  <meta name="description" content="Sixty-seven ready-to-use AI prompt templates: landing, blog, SEO, email, social, support, FAQ, about, CTA, plus meta edit passes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&family=JetBrains+Mono:ital,wght@0,400;0,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --bg-card: #0f1629;
+      --bg-prompt: #060a14;
+      --border: rgba(59, 130, 246, 0.2);
+      --text: #e8eef8;
+      --muted: #94a3b8;
+      --blue: #3b82f6;
+      --cyan: #06b6d4;
+      --purple: #8b5cf6;
+      --grad: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 50%, var(--purple) 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      font-size: 13.5px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      color-adjust: exact;
+    }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 100% 50% at 0% 0%, rgba(59, 130, 246, 0.1), transparent 48%),
+        radial-gradient(ellipse 90% 45% at 100% 10%, rgba(139, 92, 246, 0.1), transparent 50%);
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 1.75rem 1.15rem 3rem; }
+    .print-bar { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
+    .btn-print {
+      font-family: inherit; font-size: 0.8125rem; font-weight: 600;
+      padding: 0.55rem 1.2rem; border-radius: 999px; cursor: pointer;
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.2));
+      color: #f0f9ff;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+      transition: transform 0.15s ease;
+    }
+    .btn-print:hover { transform: translateY(-1px); }
+    @media print {
+      .print-bar { display: none; }
+      .wrap { max-width: 100%; padding: 0; }
+      h2.cat { break-after: avoid; page-break-after: avoid; }
+      .item, .help-block { break-inside: avoid; page-break-inside: avoid; }
+    }
+    .help-block {
+      margin: 1.25rem 0; padding: 1rem 1.15rem; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--bg-card);
+    }
+    .help-block h3 { font-size: 0.85rem; color: #fff; margin-bottom: 0.5rem; }
+    .help-block p, .help-block li { font-size: 0.78rem; color: var(--muted); }
+    .help-block ul { margin: 0.4rem 0 0 1.1rem; }
+    .help-block li { margin-bottom: 0.3rem; }
+    .ref-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-top: 0.45rem; }
+    .ref-table th, .ref-table td {
+      border: 1px solid rgba(6, 182, 212, 0.15); padding: 0.4rem 0.45rem; text-align: left;
+    }
+    .ref-table th { background: rgba(59, 130, 246, 0.1); color: #e2e8f0; }
+    .ref-table tr:nth-child(even) td { background: rgba(139, 92, 246, 0.04); }
+    .tweak {
+      font-size: 0.75rem; color: var(--muted);
+      border-left: 2px solid var(--purple); padding-left: 0.5rem; margin: 0.5rem 0 0.75rem;
+    }
+    .index {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.35rem 1rem; font-size: 0.76rem; margin-top: 0.5rem;
+    }
+    .index a { color: var(--cyan); text-decoration: none; }
+    .index a:hover { text-decoration: underline; }
+    header.site {
+      border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem 1.4rem; background: var(--bg-card);
+      margin-bottom: 1.4rem; position: relative; overflow: hidden;
+    }
+    header.site::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad); }
+    .brand { display: flex; align-items: center; gap: 0.65rem; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 10px; background: var(--grad);
+      display: grid; place-items: center; font-weight: 700; font-size: 0.7rem; color: #fff;
+    }
+    .brand h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.03em; }
+    .brand span { color: var(--muted); font-size: 0.8rem; }
+    .doc-title { margin-top: 0.8rem; font-size: 1.02rem; color: var(--cyan); font-weight: 600; }
+    .doc-sub { margin-top: 0.35rem; font-size: 0.82rem; color: var(--muted); }
+    h2.cat {
+      font-size: 0.88rem; font-weight: 700; color: #fff; margin: 1.5rem 0 0.6rem;
+      padding-bottom: 0.35rem; border-bottom: 1px solid rgba(6, 182, 212, 0.25);
+      display: flex; align-items: center; gap: 0.4rem;
+      scroll-margin-top: 1.25rem;
+    }
+    h2.cat::before {
+      content: ""; width: 4px; height: 1rem; border-radius: 2px;
+      background: var(--grad);
+    }
+    ::selection { background: rgba(59, 130, 246, 0.35); color: #fff; }
+    .prelude {
+      font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.68rem;
+      color: #a5b4fc; line-height: 1.4; background: var(--bg-prompt);
+      border: 1px dashed rgba(139, 92, 246, 0.35); border-radius: 8px; padding: 0.6rem 0.7rem; margin-top: 0.4rem; white-space: pre-wrap;
+    }
+    .item { margin-bottom: 0.85rem; }
+    .item .n {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--purple); margin-bottom: 0.2rem;
+    }
+    .prompt {
+      font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.68rem; line-height: 1.45;
+      color: #cbd5e1; background: var(--bg-prompt);
+      border: 1px solid rgba(6, 182, 212, 0.12); border-radius: 8px; padding: 0.65rem 0.7rem; white-space: pre-wrap; word-break: break-word;
+    }
+    .ph { color: var(--cyan); }
+    footer.site {
+      margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; align-items: center;
+      font-size: 0.74rem; color: var(--muted);
+    }
+    footer.site a { color: var(--cyan); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="print-bar">
+      <button type="button" class="btn-print" onclick="window.print()">Print / Save PDF</button>
+    </div>
+
+    <header class="site">
+      <div class="brand">
+        <div class="brand-mark">SX</div>
+        <div>
+          <h1>SkillsXAI</h1>
+          <span>Copy &amp; marketing — prompt library</span>
+        </div>
+      </div>
+      <p class="doc-title">AI website prompts (67 templates — 50+ core + refine)</p>
+      <p class="doc-sub">Replace <span class="ph" style="font-family: JetBrains Mono, monospace; font-size: 0.8rem;">[BRACKETS]</span> with your product, audience, and facts. One prompt = one model turn unless you split into outline → draft.</p>
+      <p class="doc-sub" style="margin-top:0.4rem; font-size:0.75rem;">Reference edition April 2026. PDF: use Print / Save PDF; enable “Background graphics” for colors.</p>
+    </header>
+
+    <div class="help-block">
+      <h3>How to get consistent, publishable copy</h3>
+      <p>LLMs follow structure. Give role, output shape, and constraints in one block. For regulated industries (health, finance, law), have a human review; these templates are starting points, not legal advice.</p>
+      <ul>
+        <li><strong style="color: #e2e8f0;">Fill every placeholder</strong> before generating; vague inputs yield generic text.</li>
+        <li><strong style="color: #e2e8f0;">Chain prompts</strong> — outline first, then section-by-section, then line-edit pass with “improve for clarity, keep facts fixed.”</li>
+        <li><strong style="color: #e2e8f0;">Ground with facts</strong> — paste bullet notes, not “make something up about our 10x ROI” unless you supply numbers.</li>
+        <li><strong style="color: #e2e8f0;">Locale</strong> — add region, date format, currency, and English variant (e.g. en-IN vs en-US) for customer-facing text.</li>
+        <li><strong style="color: #e2e8f0;">Style guide</strong> — add “avoid em dash; Oxford comma: yes; brand name casing: X” in a second system message or prefix.</li>
+        <li><strong style="color: #e2e8f0;">Evaluation</strong> — keep 3 “golden” prompts; rerun after model or template changes to catch regressions.</li>
+        <li><strong style="color: #e2e8f0;">Privacy</strong> — strip PII from prompts when using third-party APIs; use synthetic examples for public demos.</li>
+        <li><strong style="color: #e2e8f0;">Accessibility</strong> — when generating for web, request heading hierarchy, link text that makes sense out of context, and alt text for meaning not decoration.</li>
+      </ul>
+    </div>
+
+    <div class="help-block">
+      <h3>Common placeholder quick reference</h3>
+      <p class="tweak">Reuse your own short codes across templates (e.g. <span class="ph">[ICP]</span> = “solo founders running Shopify stores in India”) so iterations stay consistent.</p>
+      <table class="ref-table" aria-label="Placeholder meanings">
+        <thead>
+          <tr><th>Token</th><th>Typical meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code class="ph">[PRODUCT]</code> / <code class="ph">[PRODUCT_NAME]</code></td><td>What you sell — app, SKU, or service name as customers see it.</td></tr>
+          <tr><td><code class="ph">[ICP]</code></td><td>Ideal customer profile: role, industry, size, pain.</td></tr>
+          <tr><td><code class="ph">[CTA]</code></td><td>Desired user action: verb-led (Start trial, Get sample).</td></tr>
+          <tr><td><code class="ph">[URL]</code></td><td>Destination link; use UTM query params in your sheet, not in the prompt if you A/B the base URL.</td></tr>
+          <tr><td><code class="ph">[TONE]</code> / <code class="ph">[VOICE]</code></td><td>adjective list + one competitor voice to match or avoid.</td></tr>
+          <tr><td><code class="ph">[KEYWORD]</code></td><td>Primary SEO term; don’t stuff — one natural use per 100–150 words is a rule of thumb.</td></tr>
+          <tr><td><code class="ph">[PROOF]</code></td><td>Named customer, NPS, star rating, or award — only if you can document it.</td></tr>
+          <tr><td><code class="ph">[BRAND]</code></td><td>How the name is written; trademark symbol usage per your style guide.</td></tr>
+          <tr><td><code class="ph">[SEGMENT]</code></td><td>CRM slice: new subscriber, high-LTV, trial ending, geography, plan tier.</td></tr>
+          <tr><td><code class="ph">[COMPLIANCE_NOTES]</code></td><td>Claims you cannot make, disclaimers, age restrictions, or industry rules in plain text.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="help-block">
+      <h3>Jump to category</h3>
+      <nav class="index" aria-label="Prompt categories">
+        <a href="#cat-landing">Landing &amp; hero</a>
+        <a href="#cat-blog">Blog &amp; editorial</a>
+        <a href="#cat-product">Product descriptions</a>
+        <a href="#cat-seo">SEO &amp; metadata</a>
+        <a href="#cat-email">Email</a>
+        <a href="#cat-social">Social &amp; ads</a>
+        <a href="#cat-support">Support &amp; CX</a>
+        <a href="#cat-faq">FAQ</a>
+        <a href="#cat-about">About &amp; company</a>
+        <a href="#cat-cta">CTAs &amp; conversion</a>
+        <a href="#cat-meta">Meta: edit &amp; refine</a>
+      </nav>
+    </div>
+
+    <div class="help-block">
+      <h3>Optional universal system prefix</h3>
+      <p>Prepend in your tool’s <em>system</em> field (when available) to bias safety and format discipline across all templates below.</p>
+      <div class="prelude">You are a web and marketing copy assistant. Do not fabricate customers, statistics, awards, or regulatory claims. If a fact is not supplied, use the literal tag [FILL] instead of inventing. Obey the output structure, headings, and length limits in the user message exactly.</div>
+    </div>
+
+    <h2 class="cat" id="cat-landing">Landing page copy</h2>
+
+    <div class="item"><div class="n">L1</div>
+      <div class="prompt">You are a senior conversion copywriter. Write a hero section (headline max 10 words, subhead 2 lines, 2 CTAs) for <span class="ph">[PRODUCT_NAME]</span> aimed at <span class="ph">[ICP]</span>. Key outcome: <span class="ph">[PRIMARY_BENEFIT]</span>. Proof point: <span class="ph">[METRIC_OR_LOGO_LIST]</span>. Tone: <span class="ph">[e.g. confident, friendly, technical]</span>. Format: return headline, subhead, primary CTA, secondary CTA, and 3 trust bullets.</div></div>
+    <div class="item"><div class="n">L2</div>
+      <div class="prompt">Create a "problem / agitation / solution" block for a landing page. Problem: <span class="ph">[PAIN]</span> for <span class="ph">[AUDIENCE]</span>. Our solution: <span class="ph">[HOW_IT_WORKS_IN_ONE_LINE]</span>. End with a CTA to <span class="ph">[ACTION]</span>. Max 120 words. No jargon without definition.</div></div>
+    <div class="item"><div class="n">L3</div>
+      <div class="prompt">Write 3 variant headlines + matching subheads for A/B testing. Product: <span class="ph">[PRODUCT]</span>, category: <span class="ph">[CATEGORY]</span>, differentiator: <span class="ph">[MOAT]</span>. Label variants: benefit-led, social-proof-led, risk-reversal-led.</div></div>
+    <div class="item"><div class="n">L4</div>
+      <div class="prompt">Outline a landing page: Hero, social proof bar, 3 feature sections (feature + benefit + micro-CTA), comparison vs <span class="ph">[ALTERNATIVE]</span>, pricing teaser, FAQ (5 Qs), final CTA. For <span class="ph">[PRODUCT]</span> selling to <span class="ph">[ICP]</span>. For each section give 1–2 sentence copy direction, not full prose.</div></div>
+    <div class="item"><div class="n">L5</div>
+      <div class="prompt">Write microcopy for a hero form: label, placeholder, help text, button text, and error states for "invalid email" and "required field" for a waitlist for <span class="ph">[PRODUCT]</span>. Keep inclusive and scannable.</div></div>
+    <div class="item"><div class="n">L6</div>
+      <div class="prompt">Draft a "How it works" 3-step section. Product: <span class="ph">[PRODUCT]</span>. Step inputs from me: (1) <span class="ph">[STEP1]</span> (2) <span class="ph">[STEP2]</span> (3) <span class="ph">[STEP3]</span>. For each: title 4 words, 2 sentences, optional icon label.</div></div>
+    <div class="item"><div class="n">L7</div>
+      <div class="prompt">Write a short testimonial block using this real quote fragment: <span class="ph">[QUOTE_PART]</span>. Add attribution line with name, role, company, and a one-line result metric <span class="ph">[METRIC]</span>. If the quote is incomplete, do not fabricate; ask for missing details in brackets only.</div></div>
+
+    <h2 class="cat" id="cat-blog">Blog post creation</h2>
+
+    <div class="item"><div class="n">B1</div>
+      <div class="prompt">Act as a tech editor. Propose 10 blog titles (SEO-aware, not clickbait) for keyword theme <span class="ph">[KEYWORD]</span>, audience <span class="ph">[READER]</span>, intent <span class="ph">[informational|how-to|comparison]</span>. For each: working title, target reader question, 1 unique angle.</div></div>
+    <div class="item"><div class="n">B2</div>
+      <div class="prompt">Create a detailed outline for 1800–2200 words. Topic: <span class="ph">[TOPIC]</span>. Must include: intro hook, 4 H2s, 2 H3s under one H2, "common mistakes" section, checklist conclusion. Note where to add internal links to <span class="ph">[URL1]</span> and <span class="ph">[URL2]</span>.</div></div>
+    <div class="item"><div class="n">B3</div>
+      <div class="prompt">Write the introduction (150–200 words) for a post on <span class="ph">[TOPIC]</span>. Open with a concrete scenario, state the problem, promise what the reader will learn, include primary keyword <span class="ph">[KEYWORD]</span> in first 100 words naturally.</div></div>
+    <div class="item"><div class="n">B4</div>
+      <div class="prompt">Turn these bullet notes into a fluent section (~400 words), H2: <span class="ph">[H2_TITLE]</span>. Notes: <span class="ph">[BULLETS_OR_ROUGH_NOTES]</span>. Cite public facts only; mark <span class="ph">[VERIFY]</span> where a stat needs checking.</div></div>
+    <div class="item"><div class="n">B5</div>
+      <div class="prompt">Write 5 expert pull-quote sentences I can place in the sidebar for an article on <span class="ph">[TOPIC]</span>. No attribution. Each under 20 words, opinionated, sound bite friendly.</div></div>
+    <div class="item"><div class="n">B6</div>
+      <div class="prompt">Create a "Further reading" list: 5 items with title, one-line why it matters, and URL placeholder <span class="ph">[LINK_N]</span>. Theme: <span class="ph">[THEME]</span>. Audience: <span class="ph">[READER]</span>.</div></div>
+    <div class="item"><div class="n">B7</div>
+      <div class="prompt">Summarize a draft into a 60-word abstract + 5 tweet-length takeaways. Draft pasted below. Tone: <span class="ph">[TONE]</span>. --- <span class="ph">[PASTE_DRAFT]</span></div></div>
+
+    <h2 class="cat" id="cat-product">Product descriptions</h2>
+
+    <div class="item"><div class="n">P1</div>
+      <div class="prompt">Write a PDP (product detail page) description: 1 headline, 1 short subhead, 3 feature bullets (benefit + spec), 1 paragraph story, 1 spec list from data: <span class="ph">[RAW_SPECS]</span>. Product: <span class="ph">[NAME]</span>, category: <span class="ph">[CATEGORY]</span>, audience: <span class="ph">[BUYER]</span>. Avoid superlatives without proof.</div></div>
+    <div class="item"><div class="n">P2</div>
+      <div class="prompt">Create Amazon-style 5 bullet points (max 500 chars each) for <span class="ph">[PRODUCT]</span>. Keywords to weave naturally: <span class="ph">[KW1, KW2, KW3]</span>. Emphasize <span class="ph">[USE_CASE]</span> and <span class="ph">[DIFFERENTIATOR]</span>. No ALL CAPS except brand.</div></div>
+    <div class="item"><div class="n">P3</div>
+      <div class="prompt">Write a compact SaaS plan card: plan name, 3-line value prop, 5 inclusions, 1 limitation stated honestly, for plan <span class="ph">[TIER_NAME]</span> at <span class="ph">[PRICE]</span>/month. ICP: <span class="ph">[ICP]</span>.</div></div>
+    <div class="item"><div class="n">P4</div>
+      <div class="prompt">Draft a "What's in the box" + compatibility section for <span class="ph">[HARDWARE_OR_KIT]</span>. Items: <span class="ph">[LIST_PARTS]</span>. Compatibility: <span class="ph">[SYSTEMS_OR_DEVICES]</span>. If unknown, use <span class="ph">[TBD]</span> — do not guess.</div></div>
+    <div class="item"><div class="n">P5</div>
+      <div class="prompt">Rewrite this rough product copy to be scannable, shorter, and benefit-led. Keep facts exact. --- <span class="ph">[ROUGH_COPY]</span></div></div>
+    <div class="item"><div class="n">P6</div>
+      <div class="prompt">Generate 3 short seasonal promo blurbs (30–50 words) for <span class="ph">[PRODUCT]</span> for <span class="ph">[SEASON_OR_EVENT]</span>. Include offer <span class="ph">[OFFER]</span> and deadline <span class="ph">[DATE]</span>. Compliant, no false urgency.</div></div>
+
+    <h2 class="cat" id="cat-seo">SEO meta descriptions</h2>
+
+    <div class="item"><div class="n">S1</div>
+      <div class="prompt">Write 3 meta descriptions (max 155 chars each) for page URL <span class="ph">[PATH]</span>, primary keyword <span class="ph">[KW]</span>, page type <span class="ph">[landing|blog|product]</span>. Include a soft CTA. No duplicate phrasing between variants.</div></div>
+    <div class="item"><div class="n">S2</div>
+      <div class="prompt">Given H1: <span class="ph">[H1]</span> and first paragraph: <span class="ph">[P1]</span>, suggest title tag (max 60 chars) + meta description (max 155) + 2 search-intent–matched SERP differentiators.</div></div>
+    <div class="item"><div class="n">S3</div>
+      <div class="prompt">Create FAQ schema text (5 questions) for a page about <span class="ph">[TOPIC]</span>. Q/A must match on-page copy; for unknown answers use <span class="ph">[FILL_IN]</span>.</div></div>
+    <div class="item"><div class="n">S4</div>
+      <div class="prompt">Write alt text for 8 images. Context: page about <span class="ph">[TOPIC]</span>. For each, filename hint: <span class="ph">[img1: DESC1, img2: DESC2, ...]</span>. Alts: concise, human, no "image of" filler unless needed.</div></div>
+    <div class="item"><div class="n">S5</div>
+      <div class="prompt">List 10 long-tail keyword phrases (3–5 words) for a pillar page on <span class="ph">[PILLAR_TOPIC]</span>, with suggested H2s for 3 of them. Audience: <span class="ph">[READER]</span>, locale: <span class="ph">[en-IN|en-US|etc.]</span>.</div></div>
+
+    <h2 class="cat" id="cat-email">Email marketing copy</h2>
+
+    <div class="item"><div class="n">E1</div>
+      <div class="prompt">Write a 5-email welcome sequence for <span class="ph">[PRODUCT]</span>. Day cadence: 0,1,3,5,7. For each: subject line, preview text, goal, 150–200 word body with one CTA to <span class="ph">[URL]</span>. Voice: <span class="ph">[VOICE]</span>.</div></div>
+    <div class="item"><div class="n">E2</div>
+      <div class="prompt">Draft a promotional email for <span class="ph">[OFFER]</span> to segment <span class="ph">[SEGMENT]</span>. Structure: hook, 3 value bullets, social proof (quote <span class="ph">[PROOF]</span>), objection handling, P.S. CTA: <span class="ph">[CTA_TEXT]</span>. Unsubscribe line placeholder.</div></div>
+    <div class="item"><div class="n">E3</div>
+      <div class="prompt">Create a re-engagement email for users inactive 30 days. Product: <span class="ph">[PRODUCT]</span>. Include one "we improved X" from <span class="ph">[RELEASE_NOTE]</span>, one question to prompt reply, no guilt-tripping.</div></div>
+    <div class="item"><div class="n">E4</div>
+      <div class="prompt">Write a post-purchase follow-up: thank you, set expectations, link to <span class="ph">[DOCS_URL]</span>, 1 pro tip, request review with criteria (honest, specific). Brand: <span class="ph">[BRAND]</span>.</div></div>
+    <div class="item"><div class="n">E5</div>
+      <div class="prompt">Subject line brainstorm: 15 lines for a webinar on <span class="ph">[TOPIC]</span> for <span class="ph">[AUDIENCE]</span>. Mix curiosity, direct benefit, and deadline (if <span class="ph">[DATE]</span> is real). Flag which 3 to A/B first.</div></div>
+    <div class="item"><div class="n">E6</div>
+      <div class="prompt">Plain-text newsletter edition: 200 words, 3 section headers, 1 personal intro referencing <span class="ph">[TIMELY_HOOK]</span>, 2 links <span class="ph">[URL_A]</span> <span class="ph">[URL_B]</span>, sign-off with <span class="ph">[NAME]</span>. Conversational, light formatting only.</div></div>
+
+    <h2 class="cat" id="cat-social">Social media captions</h2>
+
+    <div class="item"><div class="n">M1</div>
+      <div class="prompt">Write 5 Instagram captions (150–300 chars) for a post showing <span class="ph">[SUBJECT_OF_POST]</span>. Brand voice: <span class="ph">[VOICE]</span>. Hashtags: 5–8 mix of broad + niche from <span class="ph">[HASHTAG_IDEAS]</span>. CTA: <span class="ph">[CTA]</span>. Variants: story-led, listicle, question, quote, UGC style.</div></div>
+    <div class="item"><div class="n">M2</div>
+      <div class="prompt">Create a LinkedIn post from this achievement: <span class="ph">[FACTS]</span>. Hook line, 3 short paragraphs, one takeaway, end with 1 open question. Professional, no emojis in body unless I say so: <span class="ph">[YES|NO_EMOJI]</span>.</div></div>
+    <div class="item"><div class="n">M3</div>
+      <div class="prompt">Write a Twitter/X thread: 6 tweets launching <span class="ph">[FEATURE]</span>. Tweet 1 hook, 2–4 how it works, 5 who it's for, 6 CTA + link <span class="ph">[URL]</span>. Under 240 chars per tweet. Optional emoji count cap: <span class="ph">[N]</span>.</div></div>
+    <div class="item"><div class="n">M4</div>
+      <div class="prompt">Short-form video script (30s): on-screen text beats + VO lines for <span class="ph">[PRODUCT_OR_TIP]</span>. Platform: <span class="ph">[TikTok|Reels]</span>. CTA: <span class="ph">[CTA]</span>. Avoid risky claims: <span class="ph">[COMPLIANCE_NOTES]</span>.</div></div>
+    <div class="item"><div class="n">M5</div>
+      <div class="prompt">Generate 10 reply templates for common comments on <span class="ph">[TOPIC]</span>: e.g. pricing question, skepticism, "is this a scam?". Polite, brief, point to <span class="ph">[FAQ_URL]</span> when useful.</div></div>
+    <div class="item"><div class="n">M6</div>
+      <div class="prompt">Facebook ad primary text: 3 variants (125 chars max each) for cold audience, product <span class="ph">[PRODUCT]</span>, offer <span class="ph">[OFFER]</span>, landing: <span class="ph">[URL]</span>. Compliant, no before/after health claims: <span class="ph">[Y|N]</span>.</div></div>
+
+    <h2 class="cat" id="cat-support">Customer support responses</h2>
+
+    <div class="item"><div class="n">C1</div>
+      <div class="prompt">Draft a helpdesk reply: customer issue: <span class="ph">[ISSUE]</span>. Policy: <span class="ph">[POLICY_SUMMARY]</span>. Resolution: <span class="ph">[RESOLUTION_STEPS]</span>. Tone: empathetic, clear, 120–180 words, sign as <span class="ph">[AGENT_NAME]</span>.</div></div>
+    <div class="item"><div class="n">C2</div>
+      <div class="prompt">Write a "we need more info" follow-up: ask for <span class="ph">[ORDER_ID]</span> <span class="ph">[SCREENSHOT]</span> <span class="ph">[OS_VERSION]</span> as needed, explain why, keep under 100 words, neutral tone.</div></div>
+    <div class="item"><div class="n">C3</div>
+      <div class="prompt">Escalation template: acknowledge delay <span class="ph">[REASON_if_shareable_OR_generic]</span>, new ETA <span class="ph">[ETA]</span>, owner <span class="ph">[TEAM_OR_ROLE]</span>, one proactive mitigation <span class="ph">[MITIGATION]</span>. No overpromising.</div></div>
+    <div class="item"><div class="n">C4</div>
+      <div class="prompt">Refund / partial credit reply for situation: <span class="ph">[SITUATION]</span> under policy: <span class="ph">[REFUND_RULES]</span>. Include next steps, timeline, and <span class="ph">[BILLING_CONTACT_if_any]</span>.</div></div>
+    <div class="item"><div class="n">C5</div>
+      <div class="prompt">Turn this internal debug note into customer-safe language. Note: <span class="ph">[INTERNAL_NOTE]</span>. Strip sensitive info; offer workaround <span class="ph">[WORKAROUND]</span>.</div></div>
+    <div class="item"><div class="n">C6</div>
+      <div class="prompt">Create a set of 5 saved replies in <span class="ph">[LANGUAGE]</span> for e-commerce: shipping delay, wrong item, damaged item, subscription cancel, how to track order. Use placeholders for order # and link <span class="ph">[TRACKING_URL_FORMAT]</span>.</div></div>
+
+    <h2 class="cat" id="cat-faq">FAQ generation</h2>
+
+    <div class="item"><div class="n">F1</div>
+      <div class="prompt">Generate 12 FAQ pairs for <span class="ph">[PRODUCT_OR_SERVICE]</span>. Group by: account &amp; billing, shipping, returns, product use, privacy. Answers 40–80 words, grounded in these facts: <span class="ph">[FACTS]</span>. If fact missing, write Q and answer "<span class="ph">[Contact support with X]</span>".</div></div>
+    <div class="item"><div class="n">F2</div>
+      <div class="prompt">Convert this policy PDF outline into 8 user-friendly Q&amp;As. Outline: <span class="ph">[BULLETS]</span>. Reading level: grade 8. Add "Last updated" line with <span class="ph">[DATE]</span>.</div></div>
+    <div class="item"><div class="n">F3</div>
+      <div class="prompt">Write objection-handling FAQ for a pricing page. Plans: <span class="ph">[PLAN_A, PLAN_B]</span>. Address: why not free, ROI, migration, data export, cancellation. No invented metrics—use <span class="ph">[INSERT_METRIC]</span> placeholders.</div></div>
+    <div class="item"><div class="n">F4</div>
+      <div class="prompt">For technical product <span class="ph">[PRODUCT]</span>, produce 5 "how do I" questions for developers with step lists referring to <span class="ph">[DOCS_PATH_OR_ANCHOR]</span>. If steps unknown, use numbered placeholders.</div></div>
+    <div class="item"><div class="n">F5</div>
+      <div class="prompt">Localize this FAQ to <span class="ph">[LOCALE_OR_REGION]</span> (spelling, currency, units). English source: <span class="ph">[PASTE_FAQ]</span>. Keep structure identical.</div></div>
+
+    <h2 class="cat" id="cat-about">About page content</h2>
+
+    <div class="item"><div class="n">A1</div>
+      <div class="prompt">Write "Our story" (250–350 words) for <span class="ph">[COMPANY]</span> founded <span class="ph">[YEAR]</span>, origin story: <span class="ph">[FACTS]</span>, mission: <span class="ph">[MISSION]</span>, what we will never do: <span class="ph">[VALUES]</span>. No invented anecdotes.</div></div>
+    <div class="item"><div class="n">A2</div>
+      <div class="prompt">Team section blurbs: for each person provide name, role, 2-line bio, one fun fact. Inputs: <span class="ph">[LIST_NAME_ROLE_FACTS]</span>. Keep parallel structure, avoid clichés like "guru" or "ninja" unless asked.</div></div>
+    <div class="item"><div class="n">A3</div>
+      <div class="prompt">Mission + vision + values: one sentence each, then expand values to 3 bullets (behavior + example) for <span class="ph">[COMPANY]</span> in <span class="ph">[INDUSTRY]</span>.</div></div>
+    <div class="item"><div class="n">A4</div>
+      <div class="prompt">Press boilerplate: 100 words, standard third person, for <span class="ph">[COMPANY]</span>, what we build <span class="ph">[PRODUCT]</span>, who we serve <span class="ph">[ICP]</span>, HQ <span class="ph">[LOCATION]</span>, website <span class="ph">[URL]</span>, contact <span class="ph">[PRESS_EMAIL]</span>.</div></div>
+    <div class="item"><div class="n">A5</div>
+      <div class="prompt">Short founder letter (200 words): address <span class="ph">[READER]</span>, explain why <span class="ph">[PROBLEM_MATTERS]</span>, our commitment, invite feedback to <span class="ph">[EMAIL]</span>. Warm, credible, no stock phrases.</div></div>
+
+    <h2 class="cat" id="cat-cta">Call-to-action writing</h2>
+
+    <div class="item"><div class="n">T1</div>
+      <div class="prompt">Write 20 CTA button labels for <span class="ph">[ACTION: sign up, book, buy, etc.]</span> for product <span class="ph">[PRODUCT]</span>. Mix action verbs; avoid "Submit". Flag top 5 for A/B on mobile (short labels).</div></div>
+    <div class="item"><div class="n">T2</div>
+      <div class="prompt">Create sticky bar copy: 8 words max + CTA, for <span class="ph">[OFFER]</span> with deadline <span class="ph">[DATE]</span>. Dismissable optional line if <span class="ph">[NOT_INTERESTED_LINK]</span> exists: write microcopy for that too.</div></div>
+    <div class="item"><div class="n">T3</div>
+      <div class="prompt">Exit-intent modal: headline, 2 lines body, 1 CTA, 1 secondary "no thanks" that respects the user, offer: <span class="ph">[LEAD_MAGNET_OR_DISCOUNT]</span>, brand: <span class="ph">[BRAND]</span>.</div></div>
+    <div class="item"><div class="n">T4</div>
+      <div class="prompt">In-app prompt for upgrade: current plan <span class="ph">[PLAN_A]</span>, next tier <span class="ph">[PLAN_B]</span>, gating event <span class="ph">[TRIGGER_E.G._LIMIT_REACHED]</span>, 2-sentence value, single CTA, link <span class="ph">[UPGRADE_URL]</span>.</div></div>
+    <div class="item"><div class="n">T5</div>
+      <div class="prompt">Video end-screen lines: 15 words + subscribe reminder + "next video" tease: <span class="ph">[NEXT_TOPIC]</span> for YouTube channel <span class="ph">[CHANNEL]</span>.</div></div>
+    <div class="item"><div class="n">T6</div>
+      <div class="prompt">Risk-reversal CTA copy: free trial, money-back, or both per <span class="ph">[OFFER_TYPE]</span>. Product <span class="ph">[PRODUCT]</span>, duration <span class="ph">[DAYS]</span>, conditions in plain language from <span class="ph">[TERMS_SNIPPET]</span>.</div></div>
+
+    <h2 class="cat" id="cat-meta">Meta: edit &amp; refine (second pass)</h2>
+    <p class="tweak" style="margin-top:0;">Use these on <em>existing</em> drafts. Paste full text where indicated. They do not replace legal or brand review.</p>
+
+    <div class="item"><div class="n">X1</div>
+      <div class="prompt">You are a line editor. Improve clarity and flow only. Do not add facts. Cut 15% word count. Preserve H2/H3 structure. Mark removed clichés with ((cut)). Text: <span class="ph">[PASTE_COPY]</span></div></div>
+    <div class="item"><div class="n">X2</div>
+      <div class="prompt">Convert passive voice to active where it improves energy; keep passive if it’s more accurate (e.g. errors were found). Output full revised text. Source: <span class="ph">[PASTE_COPY]</span></div></div>
+    <div class="item"><div class="n">X3</div>
+      <div class="prompt">Produce a red-team pass: list 5 ways a skeptical reader could attack this page, with suggested copy fixes that don’t invent data. Page goal: <span class="ph">[GOAL]</span>. Copy: <span class="ph">[PASTE_COPY]</span></div></div>
+    <div class="item"><div class="n">X4</div>
+      <div class="prompt">Extract a style guide snippet (max 12 rules) from two samples I like. Sample A: <span class="ph">[TEXT_A]</span> --- Sample B: <span class="ph">[TEXT_B]</span>. Format: bullet rules, example good / bad for 3 rules.</div></div>
+    <div class="item"><div class="n">X5</div>
+      <div class="prompt">Plain-English rewrite for reading level ~8th grade. Preserve all numbers, prices, and legal qualifiers exactly. If a sentence must stay technical, keep it and add one short parenthetical. Text: <span class="ph">[PASTE_COPY]</span></div></div>
+    <div class="item"><div class="n">X6</div>
+      <div class="prompt">Harmonize terminology: replace inconsistent product names with <span class="ph">[CANONICAL_NAME]</span>. List every change as before → after. Text: <span class="ph">[PASTE_COPY]</span></div></div>
+    <div class="item"><div class="n">X7</div>
+      <div class="prompt">Write 3 subject lines + 3 push notification lines from this body (no new offers). Body: <span class="ph">[PASTE_EMAIL_BODY]</span>. Max length: subject 55 chars, push 90 chars each.</div></div>
+    <div class="item"><div class="n">X8</div>
+      <div class="prompt">Accessibility review: suggest improved link text for every generic "click here" / "read more" in: <span class="ph">[PASTE_HTML_OR_MARKDOWN]</span>. If format ambiguous, return a numbered list of before → after only for generic links you detect.</div></div>
+
+    <div class="help-block">
+      <h3>After the model responds — quality pass</h3>
+      <ul>
+        <li>Fact-check numbers, version names, and regulatory claims; replace hedging with verified sources or cut.</li>
+        <li>Read CTAs out loud: under 3 seconds for a mobile thumb zone; no duplicate “Learn more” without distinct destinations.</li>
+        <li>Scan for inclusive language; replace idiom that may not translate for your <span class="ph">[LOCALE]</span> audience.</li>
+        <li>SEO: one H1 per page, meta + visible copy aligned on intent, internal links to money pages and hub content.</li>
+        <li>Email/social: confirm <span class="ph">[OFFER]</span> and <span class="ph">[DATE]</span> match your CMS and store rules before scheduling.</li>
+        <li>Support macros: test links and placeholder substitution in Zendesk/Intercom before saving as a saved reply.</li>
+        <li>Brand: run a diff against your terminology sheet; ensure product names match your design system and package labels.</li>
+      </ul>
+      <p class="tweak" style="margin-top:0.65rem; margin-bottom:0;">Re-run with “you are a skeptical editor; mark weak claims in [[brackets]]” for a second pass when stakes are high.</p>
+    </div>
+
+    <footer class="site">
+      <span>67 copy-ready templates — SkillsXAI &middot; customize placeholders before publishing.</span>
+      <a href="https://skillsxai.com">skillsxai.com</a>
+    </footer>
+  </div>
+</body>
+</html>

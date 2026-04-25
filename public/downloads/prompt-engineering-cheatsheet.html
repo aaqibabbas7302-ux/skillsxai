@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Engineering Cheat Sheet | SkillsXAI</title>
+  <meta name="description" content="Printable guide: prompting fundamentals, few-shot vs zero-shot, chain-of-thought, system prompts, sampling parameters, advanced methods, templates, and common mistakes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    html {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    @page { margin: 12mm; size: A4; }
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0 !important; }
+      .sheet { box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:24px 18px 48px;font-family:Inter,system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.55;color:#e2e8f0;background:#0a0f1a;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+  <div class="sheet" style="max-width:900px;margin:0 auto;padding:28px 32px 36px;border-radius:16px;border:1px solid rgba(59,130,246,0.2);background:linear-gradient(165deg,rgba(15,23,42,0.95) 0%,#0a0f1a 40%,rgba(10,15,26,0.98) 100%);box-shadow:0 24px 80px -24px rgba(0,0,0,0.55);-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+
+    <!-- Header -->
+    <header style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid rgba(6,182,212,0.25);">
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#06b6d4;margin-bottom:6px;">SkillsXAI</div>
+        <h1 style="margin:0;font-size:1.75rem;font-weight:700;letter-spacing:-0.02em;background:linear-gradient(90deg,#3b82f6,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Prompt Engineering Cheat Sheet</h1>
+        <p style="margin:10px 0 0;font-size:0.95rem;color:#94a3b8;max-width:52ch;">A concise reference for designing reliable prompts: structure, examples, reasoning, system behavior, sampling, and practical templates—optimized for screen and print.</p>
+      </div>
+      <div class="no-print" style="flex-shrink:0;">
+        <button type="button" onclick="window.print()" style="font-family:Inter,sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border-radius:999px;border:1px solid rgba(59,130,246,0.45);cursor:pointer;color:#f8fafc;background:linear-gradient(135deg,rgba(59,130,246,0.35),rgba(139,92,246,0.35));box-shadow:0 8px 24px -8px rgba(59,130,246,0.4);-webkit-print-color-adjust:exact;print-color-adjust:exact;">Print / Save PDF</button>
+      </div>
+    </header>
+
+    <!-- At-a-glance -->
+    <div style="margin-bottom:28px;padding:16px 18px;border-radius:12px;border:1px solid rgba(139,92,246,0.28);background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(6,182,212,0.08),rgba(139,92,246,0.1));-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+      <h2 style="margin:0 0 10px;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#a5b4fc;">At a glance</h2>
+      <ol style="margin:0;padding-left:1.2rem;color:#cbd5e1;font-size:13px;line-height:1.65;">
+        <li style="margin-bottom:4px;">Define <strong style="color:#e2e8f0;">role + goal + constraints</strong> before the task.</li>
+        <li style="margin-bottom:4px;">Choose <strong style="color:#e2e8f0;">zero-shot</strong> for breadth; <strong style="color:#e2e8f0;">few-shot</strong> for rigid patterns.</li>
+        <li style="margin-bottom:4px;">Use <strong style="color:#e2e8f0;">CoT</strong> when steps matter; use <strong style="color:#e2e8f0;">JSON / keys</strong> when parsing matters.</li>
+        <li style="margin-bottom:4px;">Put <strong style="color:#e2e8f0;">system</strong> rules once; keep user turns for data + ask.</li>
+        <li><strong style="color:#e2e8f0;">Low temperature</strong> for facts/code; <strong style="color:#e2e8f0;">raise</strong> for brainstorming—after the prompt is clear.</li>
+      </ol>
+    </div>
+
+    <!-- 1. Fundamentals -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(59,130,246,0.35),rgba(6,182,212,0.2),rgba(139,92,246,0.25));border:1px solid rgba(59,130,246,0.25);-webkit-print-color-adjust:exact;print-color-adjust:exact;">1. Prompting fundamentals</h2>
+      <p style="margin:0 0 14px;color:#cbd5e1;">Strong prompts usually combine four ingredients. Order them so the model sees <strong style="color:#38bdf8;">who</strong> it is, <strong style="color:#22d3ee;">what it knows</strong>, <strong style="color:#a78bfa;">what to do</strong>, and <strong style="color:#c4b5fd;">how to answer</strong>.</p>
+      <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(148,163,184,0.15);">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:rgba(30,41,59,0.85);-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(59,130,246,0.3);color:#93c5fd;">Element</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(59,130,246,0.3);color:#93c5fd;">Purpose</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(59,130,246,0.3);color:#93c5fd;">Prompt fragment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#3b82f6;">Role</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Sets expertise and tone.</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;font-family:ui-monospace,monospace;font-size:12px;">You are a senior data analyst…</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#06b6d4;">Context</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Grounds facts, audience, constraints.</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;font-family:ui-monospace,monospace;font-size:12px;">Our product is B2B SaaS; readers are PMs…</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#8b5cf6;">Task</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Single, testable instruction.</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;font-family:ui-monospace,monospace;font-size:12px;">Compare options A vs B for migration risk.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;font-weight:600;color:#a78bfa;">Format</td>
+              <td style="padding:10px 12px;color:#cbd5e1;">Defines structure, length, and fields.</td>
+              <td style="padding:10px 12px;color:#e2e8f0;font-family:ui-monospace,monospace;font-size:12px;">Reply with: Summary / Risks / Next steps (bullets).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul style="margin:14px 0 0;padding-left:1.25rem;color:#94a3b8;font-size:13px;">
+        <li style="margin-bottom:6px;"><strong style="color:#e2e8f0;">One job per prompt:</strong> split “research + draft + critique” into separate turns or sections.</li>
+        <li style="margin-bottom:6px;"><strong style="color:#e2e8f0;">Be specific about success:</strong> “actionable for a junior dev” beats “make it good.”</li>
+        <li><strong style="color:#e2e8f0;">Ask for uncertainty:</strong> “List assumptions and what would change your answer.”</li>
+      </ul>
+      <h3 style="margin:20px 0 10px;font-size:0.9rem;font-weight:700;color:#22d3ee;">Delimiters &amp; structure</h3>
+      <p style="margin:0 0 12px;color:#94a3b8;font-size:13px;">Use clear boundaries so the model does not mix instructions with data. XML-style tags, markdown headings, and triple-quoted blocks all work; stay consistent within a project.</p>
+      <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(148,163,184,0.15);margin-bottom:12px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+          <thead>
+            <tr style="background:rgba(30,41,59,0.85);">
+              <th style="text-align:left;padding:8px 10px;border-bottom:1px solid rgba(59,130,246,0.28);color:#7dd3fc;">Pattern</th>
+              <th style="text-align:left;padding:8px 10px;border-bottom:1px solid rgba(59,130,246,0.28);color:#7dd3fc;">When to use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:8px 10px;border-bottom:1px solid rgba(51,65,85,0.5);font-family:ui-monospace,monospace;color:#e2e8f0;">&lt;document&gt; … &lt;/document&gt;</td>
+              <td style="padding:8px 10px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Long source text: summarize, extract, or quote from inside the tag only.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:8px 10px;border-bottom:1px solid rgba(51,65,85,0.5);font-family:ui-monospace,monospace;color:#e2e8f0;">&lt;rules&gt; … &lt;/rules&gt;</td>
+              <td style="padding:8px 10px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Non-negotiables the assistant must re-read (legal, style, PII handling).</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:8px 10px;font-family:ui-monospace,monospace;color:#e2e8f0;">--- USER_INPUT ---</td>
+              <td style="padding:8px 10px;color:#cbd5e1;">Simple, visible separation when XML is awkward; good for comments from users.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:12px 14px;border-radius:8px;border:1px solid rgba(51,65,85,0.55);background:rgba(10,15,26,0.6);font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">
+        <span style="color:#64748b;"># Minimal structured prompt (inline)</span><br />
+        &lt;role&gt; You are a careful reviewer. &lt;/role&gt;<br />
+        &lt;task&gt; List gaps in the argument. &lt;/task&gt;<br />
+        &lt;document&gt; … paste text … &lt;/document&gt;
+      </div>
+    </section>
+
+    <!-- 2. Zero-shot vs Few-shot -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(6,182,212,0.3),rgba(59,130,246,0.22),rgba(139,92,246,0.2));border:1px solid rgba(6,182,212,0.25);-webkit-print-color-adjust:exact;print-color-adjust:exact;">2. Zero-shot vs few-shot</h2>
+      <p style="margin:0 0 14px;color:#cbd5e1;"><strong style="color:#22d3ee;">Zero-shot:</strong> no examples—just instructions. <strong style="color:#a78bfa;">Few-shot:</strong> 1–10 (often 2–5) input–output pairs that show the pattern you want.</p>
+      <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(148,163,184,0.15);margin-bottom:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:rgba(30,41,59,0.85);">
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(6,182,212,0.35);color:#67e8f9;">Dimension</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(6,182,212,0.35);color:#67e8f9;">Zero-shot</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(6,182,212,0.35);color:#67e8f9;">Few-shot</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#94a3b8;">Best for</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">General tasks, speed, large context for documents</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">Strict format, classification, extraction, style mimicry</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#94a3b8;">Trade-off</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">May guess format unless you specify it</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">Uses tokens; bad examples teach bad habits</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;color:#94a3b8;">Tip</td>
+              <td style="padding:10px 12px;color:#e2e8f0;">Add format schema + criteria in text</td>
+              <td style="padding:10px 12px;color:#e2e8f0;">Keep examples diverse, label edge cases, avoid contradictions</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr;gap:12px;">
+        <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(59,130,246,0.25);background:rgba(30,58,138,0.15);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#60a5fa;margin-bottom:8px;">Zero-shot example</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:12px;color:#cbd5e1;line-height:1.5;">Classify the following ticket as <em>billing</em>, <em>bug</em>, or <em>feature</em>. Output JSON: <code style="color:#a5b4fc;">{"label": "..."}</code>. Ticket: …</p>
+        </div>
+        <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(139,92,246,0.3);background:rgba(76,29,149,0.12);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px;">Few-shot pattern</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:12px;color:#cbd5e1;line-height:1.6;">Input: … → Output: {"label":"bug"}<br />Input: … → Output: {"label":"billing"}<br />Input: … → Output:</p>
+        </div>
+      </div>
+      <h3 style="margin:20px 0 10px;font-size:0.9rem;font-weight:700;color:#a78bfa;">Negative (contrast) examples</h3>
+      <p style="margin:0 0 8px;font-size:13px;color:#94a3b8;">Showing <em>what not to do</em> (wrong label, bad tone, disallowed PII) can reduce repeated mistakes—keep negatives short to save tokens.</p>
+      <ul style="margin:0;padding-left:1.25rem;font-size:13px;color:#cbd5e1;">
+        <li style="margin-bottom:6px;"><strong style="color:#f87171;">Pitfall:</strong> contradictions between positive and negative demos confuse the model—align on one rubric.</li>
+        <li><strong style="color:#34d399;">Rule of thumb:</strong> if the task is “same as before but in French,” a single positive pair often beats a long explanation.</li>
+      </ul>
+    </section>
+
+    <!-- 3. Chain-of-Thought -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(139,92,246,0.35),rgba(59,130,246,0.2),rgba(6,182,212,0.2));border:1px solid rgba(139,92,246,0.28);-webkit-print-color-adjust:exact;print-color-adjust:exact;">3. Chain-of-thought (CoT) prompting</h2>
+      <p style="margin:0 0 12px;color:#cbd5e1;">CoT asks the model to show <strong style="color:#c4b5fd;">step-by-step reasoning</strong> before the final answer. It often improves math, logic, planning, and multi-step analysis—especially in larger models.</p>
+      <ul style="margin:0 0 14px;padding-left:1.25rem;color:#94a3b8;font-size:13px;">
+        <li style="margin-bottom:6px;"><strong style="color:#e2e8f0;">Zero-shot CoT:</strong> append “Let’s think step by step” (or “Explain your reasoning, then conclude”).</li>
+        <li style="margin-bottom:6px;"><strong style="color:#e2e8f0;">Few-shot CoT:</strong> each demo includes visible reasoning + final answer—match the style you want at test time.</li>
+        <li><strong style="color:#e2e8f0;">When to skip:</strong> latency/cost-sensitive paths, or when you need only a label and intermediate text could derail parsing—use structured output instead.</li>
+      </ul>
+      <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(51,65,85,0.6);background:rgba(15,23,42,0.65);font-family:ui-monospace,monospace;font-size:12px;color:#e2e8f0;line-height:1.55;">
+        <span style="color:#64748b;"># Template</span><br />
+        Question: …<br />
+        Before answering, work through: givens → missing info → options → recommendation.<br />
+        End with a <span style="color:#22d3ee;">Final answer:</span> line.
+      </div>
+      <p style="margin:14px 0 6px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#94a3b8;">Worked micro-example (no calculator)</p>
+      <div style="padding:12px 14px;border-radius:8px;border:1px solid rgba(139,92,246,0.3);background:rgba(15,23,42,0.8);font-family:ui-monospace,monospace;font-size:11.5px;color:#e2e8f0;line-height:1.5;">
+        Q: A bat and ball cost $1.10 total. The bat costs $1 more than the ball. What does the ball cost?<br />
+        <span style="color:#64748b;"># Ask for explicit steps, then a single numeric final line for parsing.</span><br />
+        <span style="color:#a5b4fc;">Reasoning:</span> Let ball = b, bat = b+1. b+(b+1)=1.10 → 2b+1=1.10 → b=0.05.<br />
+        <span style="color:#22d3ee;">Final answer: $0.05</span>
+      </div>
+    </section>
+
+    <!-- 4. System prompts -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(59,130,246,0.32),rgba(139,92,246,0.28),rgba(6,182,212,0.18));border:1px solid rgba(59,130,246,0.25);-webkit-print-color-adjust:exact;print-color-adjust:exact;">4. System prompts</h2>
+      <p style="margin:0 0 12px;color:#cbd5e1;">The system message (where your API supports it) sets durable defaults: <strong style="color:#93c5fd;">persona</strong>, <strong style="color:#67e8f9;">safety and policy</strong>, <strong style="color:#c4b5fd;">tooling or data rules</strong>, and <strong style="color:#a5b4fc;">output shape</strong>. User messages carry the task-specific request.</p>
+      <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(148,163,184,0.15);">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:rgba(30,41,59,0.85);">
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(139,92,246,0.35);color:#c4b5fd;">Layer</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(139,92,246,0.35);color:#c4b5fd;">Include</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#3b82f6;">Persona</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Role, seniority, tone (neutral, concise, teaching).</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#06b6d4;">Constraints</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Refuse unsafe asks; cite when unsure; no PII; locale/units.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#8b5cf6;">Output format</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Markdown vs JSON; required keys; “no preamble” for machine parsing.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;font-weight:600;color:#a78bfa;">Tool &amp; data rules</td>
+              <td style="padding:10px 12px;color:#cbd5e1;">Which tools are allowed, required JSON shape for function calls, when to say “I don’t know” vs fetch.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin:14px 0 10px;font-size:13px;color:#94a3b8;">If you only have a single user blob, mimic a system block with a clear header: <span style="color:#e2e8f0;font-family:ui-monospace,monospace;font-size:12px;">[System] … [User] …</span></p>
+      <div style="padding:12px 14px;border-radius:8px;border:1px solid rgba(59,130,246,0.25);background:rgba(15,23,42,0.75);font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.55;">
+        <span style="color:#64748b;"># Example system (abbreviated)</span><br />
+        You are a support lead for Acme. Be concise, polite, and proactive.<br />
+        Never invent order IDs or policy exceptions. If a customer shares card numbers, refuse and suggest secure channels.<br />
+        For every answer: (1) Diagnosis (2) Next step the customer can try (3) Escalation path if unresolved.<br />
+        Default tone: empathetic, no blame.
+      </div>
+    </section>
+
+    <!-- 5. Temperature & parameters -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(6,182,212,0.28),rgba(59,130,246,0.3),rgba(139,92,246,0.22));border:1px solid rgba(6,182,212,0.25);-webkit-print-color-adjust:exact;print-color-adjust:exact;">5. Temperature &amp; sampling parameters</h2>
+      <p style="margin:0 0 14px;color:#cbd5e1;">These knobs change <em>how</em> tokens are picked, not what the model “knows.” Names vary by provider; behavior is broadly similar.</p>
+      <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(148,163,184,0.15);">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:rgba(30,41,59,0.85);">
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(59,130,246,0.35);color:#93c5fd;">Parameter</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(59,130,246,0.35);color:#93c5fd;">Effect</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(59,130,246,0.35);color:#93c5fd;">Typical use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#38bdf8;">temperature</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Higher → more randomness; lower → more deterministic.</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">~0–0.3 facts, code, extraction; 0.7–1 creative drafts (if not using top_p alone).</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#22d3ee;">top_p</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Nucleus sampling: limit to smallest set of tokens whose cumulative prob ≥ p.</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">Often 0.9–0.95; combine carefully with temperature—many apps fix one and tune the other.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#a78bfa;">max_tokens / length</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">Hard cap on generation length (output side).</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">Set high enough for CoT + answer; too low truncates reasoning. Watch total context window.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#c4b5fd;">stop sequences</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">End generation when a token sequence appears—useful for strict templates.</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">e.g. stop at <code style="color:#a5b4fc;">&lt;/json&gt;</code> or a sentinel line <code style="color:#a5b4fc;">### END</code>.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);font-weight:600;color:#22d3ee;">frequency / presence *</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#cbd5e1;">*(Provider-dependent) Nudge to repeat phrases less or to encourage new topics.</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#e2e8f0;">Reduce repetition in long lists; small tweaks—avoid large values that break coherence.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;font-weight:600;color:#60a5fa;">seed</td>
+              <td style="padding:10px 12px;color:#cbd5e1;">When supported, fixes stochastic sampling for comparable runs.</td>
+              <td style="padding:10px 12px;color:#e2e8f0;">QA, regression on prompts, and A/B tests of wording at fixed temperature.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul style="margin:14px 0 0;padding-left:1.25rem;color:#94a3b8;font-size:13px;">
+        <li style="margin-bottom:6px;"><strong style="color:#e2e8f0;">Reproducibility:</strong> use low temperature <em>and</em> fixed seed if the API exposes <code style="color:#a5b4fc;">seed</code>.</li>
+        <li><strong style="color:#e2e8f0;">Don’t chase randomness for accuracy</strong>—clarify the prompt and ground with retrieval first.</li>
+      </ul>
+    </section>
+
+    <!-- 6. Advanced techniques -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(139,92,246,0.32),rgba(6,182,212,0.22),rgba(59,130,246,0.24));border:1px solid rgba(139,92,246,0.28);-webkit-print-color-adjust:exact;print-color-adjust:exact;">6. Advanced techniques</h2>
+      <div style="display:grid;gap:12px;">
+        <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(59,130,246,0.22);background:rgba(30,58,138,0.12);">
+          <h3 style="margin:0 0 8px;font-size:0.95rem;font-weight:700;color:#60a5fa;">Self-consistency</h3>
+          <p style="margin:0;font-size:13px;color:#cbd5e1;">Sample <em>multiple</em> CoT chains (higher temperature), then <strong style="color:#e2e8f0;">majority-vote</strong> the final answers or aggregate rationales. Better on hard reasoning; costs more tokens.</p>
+        </div>
+        <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(6,182,212,0.22);background:rgba(14,116,144,0.12);">
+          <h3 style="margin:0 0 8px;font-size:0.95rem;font-weight:700;color:#22d3ee;">Tree-of-thought (ToT)</h3>
+          <p style="margin:0;font-size:13px;color:#cbd5e1;">Explore <strong style="color:#e2e8f0;">branching plans</strong>—decompose, score intermediate steps, prune bad branches. Useful for puzzles, design, or search-like planning; implement as multiple LLM calls or explicit graph prompts.</p>
+        </div>
+        <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(139,92,246,0.25);background:rgba(76,29,149,0.1);">
+          <h3 style="margin:0 0 8px;font-size:0.95rem;font-weight:700;color:#c4b5fd;">ReAct (reasoning + action)</h3>
+          <p style="margin:0 0 10px;font-size:13px;color:#cbd5e1;">Interleave <strong style="color:#e2e8f0;">Thought → Action → Observation</strong> loops: the model plans, calls tools (search, code, API), reads results, updates. Foundation for many agents; requires strict tool schemas and stop conditions.</p>
+          <div style="padding:10px 12px;border-radius:6px;border:1px solid rgba(139,92,246,0.2);background:rgba(15,23,42,0.5);font-family:ui-monospace,monospace;font-size:11px;color:#a5b4fc;line-height:1.5;">
+            Thought: I need 2024 revenue, not a guess.<br />
+            Action: company_lookup("ACME", field="revenue_2024")<br />
+            Observation: { "revenue_2024_usd": 12500000 }<br />
+            Thought: I can now compare YoY if user gives 2023…
+          </div>
+        </div>
+        <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(59,130,246,0.2);background:rgba(15,23,42,0.5);">
+          <h3 style="margin:0 0 8px;font-size:0.95rem;font-weight:700;color:#93c5fd;">Program-aided (PAL / tool-as-code)</h3>
+          <p style="margin:0;font-size:13px;color:#cbd5e1;">Delegate arithmetic or data transforms to a real runtime: the model writes <strong style="color:#e2e8f0;">code</strong>, you execute, return stdout as <strong style="color:#e2e8f0;">Observation</strong>. Reduces “mental math” errors in LLMs on large or precise calculations.</p>
+        </div>
+        <div style="padding:14px 16px;border-radius:10px;border:1px solid rgba(6,182,212,0.2);background:rgba(15,23,42,0.5);">
+          <h3 style="margin:0 0 8px;font-size:0.95rem;font-weight:700;color:#22d3ee;">Reflexion &amp; critique</h3>
+          <p style="margin:0;font-size:13px;color:#cbd5e1;">After a first answer, run a <strong style="color:#e2e8f0;">critic</strong> pass: “List errors, missing edge cases, then rewrite.” Cheap way to add robustness when multi-chain voting is too costly.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Templates -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(59,130,246,0.28),rgba(139,92,246,0.26),rgba(6,182,212,0.24));border:1px solid rgba(59,130,246,0.25);-webkit-print-color-adjust:exact;print-color-adjust:exact;">7. Reusable prompt templates</h2>
+      <p style="margin:0 0 14px;color:#94a3b8;font-size:13px;">Replace bracketed fields. Keep system-level rules separate from the task line.</p>
+      <div style="display:grid;gap:12px;">
+        <div style="padding:12px 14px;border-radius:8px;border-left:3px solid #3b82f6;background:rgba(15,23,42,0.7);">
+          <div style="font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:6px;">Writing</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">Audience: [role] · Goal: [outcome] · Voice: [adjectives] · Length: [words] · Structure: [outline] · Avoid: [list]. Draft [artifact], then give 2 revision options for tone.</p>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;border-left:3px solid #06b6d4;background:rgba(15,23,42,0.7);">
+          <div style="font-size:12px;font-weight:700;color:#22d3ee;margin-bottom:6px;">Coding</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">Stack: [lang/framework] · Task: [one sentence] · Constraints: perf, style, deps · Deliver: (1) plan (2) code blocks with paths (3) tests or manual QA steps (4) known risks.</p>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;border-left:3px solid #8b5cf6;background:rgba(15,23,42,0.7);">
+          <div style="font-size:12px;font-weight:700;color:#c4b5fd;margin-bottom:6px;">Analysis</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">Data: [paste or describe] · Question: [hypothesis] · Method: [metrics/comparisons] · Output: key findings, chart suggestions, limitations, follow-up data needs.</p>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;border-left:3px solid #a78bfa;background:rgba(15,23,42,0.7);">
+          <div style="font-size:12px;font-weight:700;color:#c4b5fd;margin-bottom:6px;">Summarization</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">Summarize for [audience] in [N] bullet points. Preserve numbers and proper nouns. Flag contradictions. End with: Decisions, Open questions, Action items (owner, due).</p>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;border-left:3px solid #38bdf8;background:rgba(15,23,42,0.7);">
+          <div style="font-size:12px;font-weight:700;color:#7dd3fc;margin-bottom:6px;">Evaluation (rubric)</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">You are scoring [artifact] for [purpose]. Rubric: (1) Correctness 0–2 (2) Clarity 0–2 (3) Safety 0–2. For each, quote evidence, then give total /6 and the single highest-impact fix.</p>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;border-left:3px solid #2dd4bf;background:rgba(15,23,42,0.7);">
+          <div style="font-size:12px;font-weight:700;color:#5eead4;margin-bottom:6px;">Debugging a bad output</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">Here is the prompt: … Here is the bad output: … List (a) which instruction was violated (b) missing context (c) a revised prompt under 150 words. Do not fix the content—only the instructions.</p>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;border-left:3px solid #c084fc;background:rgba(15,23,42,0.7);">
+          <div style="font-size:12px;font-weight:700;color:#d8b4fe;margin-bottom:6px;">JSON extraction</div>
+          <p style="margin:0;font-family:ui-monospace,monospace;font-size:11.5px;color:#cbd5e1;line-height:1.5;">From the text in &lt;content&gt;, extract: {"people":[],"dates":[],"amounts":[],"open_questions":[]}. Return valid JSON only. If a field is empty, [].</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Mistakes -->
+    <section style="margin-bottom:8px;">
+      <h2 style="margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:1.05rem;font-weight:700;color:#f1f5f9;background:linear-gradient(90deg,rgba(239,68,68,0.15),rgba(59,130,246,0.22),rgba(6,182,212,0.2));border:1px solid rgba(248,113,113,0.2);-webkit-print-color-adjust:exact;print-color-adjust:exact;">8. Common mistakes &amp; fixes</h2>
+      <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(148,163,184,0.15);">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:rgba(30,41,59,0.85);">
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(248,113,113,0.3);color:#fca5a5;">Mistake</th>
+              <th style="text-align:left;padding:10px 12px;border-bottom:1px solid rgba(248,113,113,0.3);color:#86efac;">Fix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Vague goal (“improve this”)</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">Name metric: clarity, brevity, conversion—give before/after example if possible.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Stacking many tasks in one message</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">One primary objective per turn; chain prompts or use a checklist the model must complete in order.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Context window overflow</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">Summarize long docs first; retrieve top chunks; put irreducible facts up front; reduce few-shot count.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Ignoring parse format</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">Request JSON with keys + one full example; say “return ONLY valid JSON, no markdown fence.”</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Blind trust</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">Ask for citations, self-checks, or independent verification for high-stakes outputs.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Burying the lede (task last)</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">Repeat the key ask at the end, or use headings so the last line is the deliverable: “Output only the table.”</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Inconsistent few-shot quality</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">Manually review each example; drop noisy rows; add one “hard” but correct example.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.5);">
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#fecaca;">Overfitting temperature to fix prompts</td>
+              <td style="padding:10px 12px;border-bottom:1px solid rgba(51,65,85,0.5);color:#d1fae5;">If answers swing wildly, first sharpen instructions and add constraints—then re-tune sampling.</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.35);">
+              <td style="padding:10px 12px;color:#fecaca;">Lost-in-the-middle (long context)</td>
+              <td style="padding:10px 12px;color:#d1fae5;">Place critical facts at the start or end; or chunk + map-reduce with explicit merge rules.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin:20px 0 10px;padding:8px 12px;border-radius:8px;font-size:0.9rem;font-weight:700;color:#e2e8f0;background:linear-gradient(90deg,rgba(59,130,246,0.2),rgba(6,182,212,0.15));border:1px solid rgba(59,130,246,0.2);-webkit-print-color-adjust:exact;print-color-adjust:exact;">Iterative improvement loop</h3>
+      <ol style="margin:0 0 8px;padding-left:1.25rem;color:#94a3b8;font-size:13px;line-height:1.65;">
+        <li style="margin-bottom:6px;">Write a <strong style="color:#e2e8f0;">minimal</strong> prompt that hits role + task + format.</li>
+        <li style="margin-bottom:6px;">Run 3–5 real inputs; collect <strong style="color:#e2e8f0;">failure modes</strong> (not vibe complaints).</li>
+        <li style="margin-bottom:6px;">Patch <strong style="color:#e2e8f0;">one</strong> issue per revision (e.g. “always quote line numbers” OR “use ISO dates”).</li>
+        <li>Add few-shot or CoT <strong style="color:#e2e8f0;">only</strong> if instructions alone are insufficient.</li>
+        <li>Version prompts in source control: <span style="font-family:ui-monospace,monospace;font-size:12px;color:#a5b4fc;">prompts/support/v3.md</span> beats untracked copy-paste.</li>
+      </ol>
+    </section>
+
+    <!-- Footer -->
+    <footer style="margin-top:32px;padding-top:20px;border-top:1px solid rgba(6,182,212,0.2);text-align:center;">
+      <p style="margin:0 0 6px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#06b6d4;">SkillsXAI</p>
+      <p style="margin:0;font-size:12px;color:#64748b;">Prompt Engineering Cheat Sheet · For education and quick reference. Tune prompts and parameters to your model and use case.</p>
+      <p class="no-print" style="margin:14px 0 0;font-size:12px;color:#475569;">Tip: Use your browser’s print dialog to save as PDF with background graphics enabled.</p>
+    </footer>
+  </div>
+</body>
+</html>

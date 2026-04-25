@@ -3,18 +3,18 @@ import { saveCertToNeon } from '@/lib/neon'
 
 export async function POST(req: Request) {
   try {
-    const { name, email } = await req.json()
+    const { name, email, skills, course } = await req.json()
 
     if (!name || !email) {
       return NextResponse.json({ error: 'name and email are required' }, { status: 400 })
     }
 
-    const saved = await saveCertToNeon(
-      name,
-      email,
-      'ai-masterclass',
-      ['Artificial Intelligence', 'Prompt Engineering', 'AI Agents & Automation', 'AI Tools & APIs']
-    )
+    const courseSlug = typeof course === 'string' ? course : 'ai-masterclass'
+    const certSkills = Array.isArray(skills) && skills.length > 0
+      ? skills
+      : ['Artificial Intelligence', 'Prompt Engineering', 'AI Agents & Automation', 'AI Tools & APIs']
+
+    const saved = await saveCertToNeon(name, email, courseSlug, certSkills)
 
     if (!saved) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 })

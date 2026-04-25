@@ -8,7 +8,7 @@ export default function ParticleBackground() {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (pathname.startsWith('/masterclass')) return
+    if (pathname.startsWith('/masterclass') || pathname.startsWith('/certification') || pathname.startsWith('/certificatedownload')) return
     const container = containerRef.current
     if (!container) return
 

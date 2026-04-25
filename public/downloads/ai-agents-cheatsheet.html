@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agents Cheat Sheet | SkillsXAI</title>
+  <meta name="description" content="Print-optimized reference: agent architecture, n8n, tool calling, multi-agent systems, frameworks, and deployment." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <style>
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .no-print { display: none !important; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;font-family:Inter,sans-serif;font-size:13px;line-height:1.5;color:#e2e8f0;background:#0a0f1a;-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+
+  <div style="max-width:900px;margin:0 auto;padding:24px 20px 40px;box-sizing:border-box;">
+
+    <!-- Top bar: brand + print -->
+    <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid rgba(59,130,246,0.25);">
+      <div>
+        <div style="font-size:20px;font-weight:800;letter-spacing:-0.02em;background:linear-gradient(90deg,#3b82f6 0%,#06b6d4 50%,#8b5cf6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">SkillsXAI</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:4px;">AI Agents — Architecture, Tools &amp; Operations</div>
+      </div>
+      <button type="button" class="no-print" onclick="window.print()" style="font-family:Inter,sans-serif;font-size:12px;font-weight:600;padding:10px 18px;border-radius:8px;border:1px solid rgba(6,182,212,0.45);cursor:pointer;color:#0a0f1a;background:linear-gradient(135deg,#3b82f6 0%,#06b6d4 100%);box-shadow:0 4px 14px rgba(59,130,246,0.35);">Print / Save PDF</button>
+    </header>
+
+    <p style="margin:0 0 24px;font-size:12px;color:#94a3b8;border-left:3px solid #8b5cf6;padding-left:12px;">Reference for builders: definitions, system design, workflow automation, API patterns, collaboration models, and production habits. Keep language models grounded with tools, memory, and clear objectives.</p>
+
+    <!-- 1. What Are AI Agents -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(59,130,246,0.35) 0%,rgba(6,182,212,0.2) 50%,rgba(139,92,246,0.15) 100%);border:1px solid rgba(59,130,246,0.3);">1. What Are AI Agents</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#cbd5e1;"><strong style="color:#3b82f6;">Definition.</strong> An <em>agent</em> is a system that perceives context (user input, state, tool results), reasons toward a goal, and <strong>acts</strong>—often by calling tools, updating memory, or delegating work—until stopping criteria are met. It is not just a one-shot completion; it is a <strong>loop</strong> (plan → act → observe).</p>
+        <p style="margin:0 0 12px;color:#94a3b8;font-size:12px;">Contrast with a static chat: agents bind the model to <strong>environment, policies, and feedback</strong>.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(59,130,246,0.12);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#7dd3fc;">Type</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#7dd3fc;">Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Reactive</strong></td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Maps input → action with little long-term state; good for classifiers, routers, and guardrails.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Deliberative</strong></td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Builds a plan, tracks subgoals, revises on failure; common in research and coding copilots.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Tool-using</strong></td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Extends the model with APIs, SQL, search, and browsers—most production &quot;agents&quot; are this class.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Multi-agent</strong></td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Multiple roles (planner, coder, critic) with orchestration, shared memory, or handoffs.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;color:#94a3b8;font-size:12px;"><strong style="color:#06b6d4;">Capabilities to design for:</strong> retrieval, structured output, idempotent tools, human approval on sensitive steps, and measurable success criteria (accuracy, cost, latency).</p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:14px;">
+          <thead>
+            <tr style="background:rgba(139,92,246,0.1);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#c4b5fd;">Situation</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#c4b5fd;">Prefer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">One fixed transform (e.g. summarize ticket)</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Single LLM call or small chain—skip agent state.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Search + act across systems</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Tool-using agent with retrieval and an explicit <em>budget</em> (rounds, cost).</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Open-ended research or coding</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Multi-step agent with checkpointing, tests, and optional human review.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Regulated or irreversible side effects</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Human-in-the-loop and dry-run or staging tools first.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;font-size:12px;color:#94a3b8;"><strong style="color:#8b5cf6;">Reality check:</strong> &quot;Agent&quot; is often marketing. If your flow never branches on tool output, you likely have a pipeline—not an agent. Name systems by behavior, not hype.</p>
+      </div>
+    </section>
+
+    <!-- 2. Agent Architecture -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(6,182,212,0.3) 0%,rgba(59,130,246,0.25) 100%);border:1px solid rgba(6,182,212,0.28);">2. Agent Architecture</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <p style="margin:0 0 12px;color:#cbd5e1;">A minimal loop: <strong style="color:#8b5cf6;">perceive</strong> (messages + RAG) → <strong style="color:#3b82f6;">plan</strong> (optional CoT or planner model) → <strong style="color:#06b6d4;">act</strong> (tools) → <strong style="color:#a78bfa;">update memory</strong> → repeat or terminate.</p>
+        <ul style="margin:0 0 12px;padding-left:20px;color:#cbd5e1;">
+          <li style="margin-bottom:6px;"><strong style="color:#3b82f6;">Planning:</strong> Decompose the user goal, choose tools, set checkpoints. Use explicit &quot;next step&quot; prompts or a dedicated small model for triage to reduce main-model cost.</li>
+          <li style="margin-bottom:6px;"><strong style="color:#06b6d4;">Memory:</strong> <em>Short-term</em> = conversation + scratchpad. <em>Long-term</em> = vector DB, documents, or entity store. Version snapshots so you can roll back bad writes.</li>
+          <li style="margin-bottom:6px;"><strong style="color:#8b5cf6;">Tool use:</strong> JSON-schema tools, least privilege, timeouts, and retries with idempotency keys for writes.</li>
+          <li style="margin-bottom:0;"><strong style="color:#a5b4fc;">Reasoning:</strong> Chain-of-thought (internal or summarized), self-critique, or a &quot;verifier&quot; pass before irreversible calls.</li>
+        </ul>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(139,92,246,0.12);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#c4b5fd;">Component</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#c4b5fd;">What to get right</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Context window</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Trim history; summarize; inject only top-k retrieved chunks; avoid poisoned or stale RAG.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">State machine</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Encode allowed transitions (e.g. draft → review → send). Block tools outside the current state.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Policies</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">PII redaction, rate limits, tool allow lists, and escalation to humans for high-risk actions.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;padding:12px 14px;border-radius:8px;border:1px solid rgba(6,182,212,0.2);background:rgba(6,182,212,0.06);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#22d3ee;margin-bottom:8px;">Control loop (conceptual)</div>
+          <pre style="margin:0;font-family:ui-monospace,Consolas,monospace;font-size:11px;line-height:1.45;color:#a5b4fc;white-space:pre-wrap;word-break:break-all;">while not done and round &lt; max_rounds:
+  ctx = build_context(user_msg, memory, retrieved_docs)  # RAG optional
+  plan_or_action = model(ctx, available_tools=TOOLS)
+  if plan_or_action.type == "tool":
+      result = run_tool_safely(plan_or_action)  # validate, timeout, log
+      memory.append(result)
+  elif plan_or_action.type == "final":
+      return plan_or_action.answer
+  round += 1
+raise or escalate  # out of budget or stuck</pre>
+        </div>
+        <p style="margin:12px 0 0;font-size:12px;color:#94a3b8;"><strong style="color:#3b82f6;">RAG in agents:</strong> chunk + embed with provenance, filter by access control, re-rank, then attach citations to the model. Refresh embeddings when source docs change. Measure &quot;groundedness&quot; (answer supported by chunks).</p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;">
+          <thead>
+            <tr style="background:rgba(6,182,212,0.1);">
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#67e8f9;">Memory layer</th>
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#67e8f9;">Good for</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Buffer / window</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Current task details; compress older turns to summaries.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Vector + metadata</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Procedures, long docs; pair with <strong>source IDs</strong> and ACLs.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Key-value (CRM/DB)</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Authoritative user facts; avoid duplicating in free text.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. n8n -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(139,92,246,0.3) 0%,rgba(59,130,246,0.2) 100%);border:1px solid rgba(139,92,246,0.28);">3. Building with n8n</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#cbd5e1;"><strong style="color:#3b82f6;">n8n</strong> is a node-based workflow engine. Use it to wire <strong>triggers</strong> (webhooks, schedules, apps) to <strong>AI steps</strong> and downstream systems without shipping a full custom backend for every integration.</p>
+        <ol style="margin:0 0 12px;padding-left:20px;color:#cbd5e1;">
+          <li style="margin-bottom:6px;"><strong>Setup:</strong> Self-host (Docker) or n8n Cloud. Store credentials in n8n’s vault; never hard-code keys in node expressions.</li>
+          <li style="margin-bottom:6px;"><strong>Workflows:</strong> One workflow per use case. Use <em>Error Workflow</em> to centralize failure alerts (Slack, email, PagerDuty).</li>
+          <li style="margin-bottom:6px;"><strong>Triggers:</strong> Webhook for synchronous APIs; Cron for batch; Queue triggers (e.g. Redis) for backpressure. Add idempotency keys for retried deliveries.</li>
+          <li style="margin-bottom:0;"><strong>AI nodes:</strong> OpenAI / Anthropic / LangChain sub-nodes, or HTTP Request to your gateway. Keep prompts in <strong>separate</strong> nodes for diffability. Pass structured JSON between nodes.</li>
+        </ol>
+        <p style="margin:0 0 12px;padding:10px 12px;border-radius:6px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);font-size:12px;color:#94a3b8;"><strong style="color:#06b6d4;">Pattern:</strong> Webhook → validate payload → (optional) fetch context (HTTP/DB) → AI node with tools via sub-workflow or function node → map response → respond / notify. Rate-limit the webhook in your reverse proxy.</p>
+        <p style="margin:0 0 8px;font-size:12px;color:#cbd5e1;"><strong style="color:#8b5cf6;">Self-host hardening:</strong> TLS at edge, <em>BASIC_AUTH</em> or SSO for admin UI, private network for DB, disable execution if you only need static hosting of definitions, and pin image digests. Back up <code style="font-size:11px;background:#0a0f1a;padding:2px 6px;border-radius:4px;">~/.n8n</code> and credentials with your DR plan.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(139,92,246,0.1);">
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#c4b5fd;">Node / area</th>
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#c4b5fd;">Agent-related use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Code / Function</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Transform LLM output into tool payloads; validate with Zod/Pydantic-style checks.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Execute Workflow</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Nest reusable &quot;tool&quot; subflows (e.g. create ticket) with one place to add retries.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Wait / If / Switch</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Branch on model confidence, user approval webhooks, or business rules.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">HTTP Request / GraphQL</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Call your own agent API, embedding service, or vector DB. Set sane timeouts (10–30s typical).</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Sticky / Queue</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Smooth spikes; one long workflow run per user message in async mode.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. Tool & function calling -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(59,130,246,0.35) 0%,rgba(139,92,246,0.2) 100%);border:1px solid rgba(59,130,246,0.3);">4. Tool Calling &amp; Function Calling</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#cbd5e1;">Models emit <strong>tool calls</strong> (name + arguments) that your app executes. Reliability comes from <strong>strict schemas</strong>, validation, and small tool surfaces per step.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(6,182,212,0.12);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#67e8f9;">Provider pattern</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#67e8f9;">Practical tips</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>OpenAI</strong> tools / functions</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Attach tools with JSON Schema; use <code style="font-size:11px;background:#0a0f1a;padding:2px 6px;border-radius:4px;">parallel_tool_calls</code> when safe; return tool results in the next user/tool message. Prefer strict schema when available.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Anthropic</strong> tool use</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Tools block in API; assistant returns <code style="font-size:11px;background:#0a0f1a;padding:2px 6px;border-radius:4px;">tool_use</code> content; you append <code style="font-size:11px;background:#0a0f1a;padding:2px 6px;border-radius:4px;">tool_result</code> user messages. Good for interleaved text + tool calls.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Cross-vendor</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Abstract tool registry + adapter layer. Log raw calls for replay. Enforce max rounds and token budgets. Never trust the model to skip validation.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 10px;font-size:12px;color:#94a3b8;"><strong style="color:#8b5cf6;">Anti-patterns:</strong> giant catch-all tools; allowing raw SQL or shell from the model; returning secrets in tool error strings; unbounded re-invocation on the same error.</p>
+        <p style="margin:0 0 8px;font-size:12px;color:#cbd5e1;"><strong style="color:#3b82f6;">ReAct-style flows:</strong> interleave <em>thought</em> (optional, may omit in prod), <em>action</em> (tool), <em>observation</em> (result). In APIs this maps to multiple chat turns with tool messages—your runtime stitches the loop. Prefer storing only <strong>action + observation</strong> in logs to reduce PII in chain-of-thought text.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(59,130,246,0.1);">
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#93c5fd;">Schema practice</th>
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#93c5fd;">Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Concrete enums over free strings</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Reduces bad tool names and eases static analysis in CI.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Required fields + max lengths</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Prevents runaway args and OOMs in downstream services.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Narrow return payloads</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Tools return <em>evidence</em> not whole tables; paginate in the app layer.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;">Idempotency keys (writes)</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Safe retries if the model or network duplicates a call.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5. Multi-agent -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(6,182,212,0.25) 0%,rgba(139,92,246,0.3) 100%);border:1px solid rgba(6,182,212,0.28);">5. Multi-Agent Systems</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <p style="margin:0 0 10px;color:#cbd5e1;">Split work when roles and expertise differ: <strong>orchestrator</strong> decomposes; <strong>specialists</strong> execute; <strong>critic / reviewer</strong> reduces hallucination before deliverables ship.</p>
+        <ul style="margin:0 0 12px;padding-left:20px;color:#cbd5e1;">
+          <li style="margin-bottom:6px;"><strong style="color:#3b82f6;">Orchestration:</strong> Central planner (single brain) vs. <em>peer</em> debate—pick central for auditability, peer for creative divergence with a merge step.</li>
+          <li style="margin-bottom:6px;"><strong style="color:#06b6d4;">Sub-agents:</strong> Narrow prompts and tools per agent; pass compact handoff packets (goal, constraints, files, done criteria) instead of full chat logs.</li>
+          <li style="margin-bottom:0;"><strong style="color:#8b5cf6;">Delegation:</strong> Define escalation: when to ask a human, when to retry, when to fail closed. Use a shared <strong>task queue</strong> or blackboard for state.</li>
+        </ul>
+        <p style="margin:0 0 12px;padding:10px 12px;border-radius:6px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);font-size:12px;color:#cbd5e1;"><strong style="color:#a78bfa;">Watch:</strong> cost explosion (N×rounds), inconsistent world model across agents, and duplicate tool side effects. Mitigate with shared schemas, one writer per resource, and execution traces.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(6,182,212,0.1);">
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#67e8f9;">Pattern</th>
+              <th style="text-align:left;padding:6px 8px;border:1px solid rgba(71,85,105,0.4);color:#67e8f9;">When it shines</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Supervisor</strong> → workers</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Single routing decision point; good trace for compliance and debugging.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Sequential</strong> handoff</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Pipeline: research → draft → review; each stage has different tools and budgets.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Parallel</strong> + merge</td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Compare approaches (A/B) or sources; <strong>reducer</strong> step must be deterministic.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;vertical-align:top;"><strong>Critic / judge</strong></td>
+              <td style="padding:6px 8px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Second pass on code or policy; keep rubric short to avoid dueling models forever.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. Frameworks -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(59,130,246,0.3) 0%,rgba(6,182,212,0.2) 50%,rgba(139,92,246,0.2) 100%);border:1px solid rgba(59,130,246,0.28);">6. Popular Frameworks</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(59,130,246,0.12);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#93c5fd;">Framework</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#93c5fd;">Strengths &amp; fit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;font-weight:600;">LangChain / LangGraph</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Chains, RAG, tools; <strong>LangGraph</strong> adds stateful graphs, cycles, and human-in-the-loop—good for controllable multi-step agents in Python/JS.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;font-weight:600;">CrewAI</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Role-based crews with processes (sequential, hierarchical). Fast to prototype &quot;team&quot; automations; watch token burn and overlapping responsibilities.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;font-weight:600;">AutoGen / AG2</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Conversable agents, group chat patterns, and code execution sandboxes. Strong for research-style pipelines; secure execution environment is a must.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;font-weight:600;">n8n</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Low-code <strong>ops glue</strong>: schedules, webhooks, CRM, email. Pair with a small &quot;brain&quot; service when you outgrow pure no-code control flow.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;font-weight:600;">LlamaIndex / Haystack</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Retrieval-first stacks: indexing, query engines, agents over docstores—great when quality depends on <strong>data ingestion</strong> more than model choice.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;font-weight:600;">Semantic Kernel</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">.NET-oriented planners and plugins; fits enterprise LOB systems and strong typing for tools.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;font-weight:600;">Mastra, OpenAI SDK</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Lightweight when you need custom TypeScript/Node agents without the full kitchen sink—own your abstractions and tests.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;font-size:12px;color:#94a3b8;">Choose by <strong>language</strong>, <strong>operational maturity</strong> (observability, testing), and whether you need <strong>arbitrary code</strong> in the hot path. Frameworks are accelerators, not substitutes for data and policy design.</p>
+      </div>
+    </section>
+
+    <!-- 7. Deployment & monitoring -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(139,92,246,0.28) 0%,rgba(6,182,212,0.25) 100%);border:1px solid rgba(139,92,246,0.28);">7. Deployment &amp; Monitoring</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <ul style="margin:0 0 12px;padding-left:20px;color:#cbd5e1;">
+          <li style="margin-bottom:6px;"><strong style="color:#3b82f6;">Hosting:</strong> Serverless (Vercel, Lambda) for bursty I/O; containers (Fly, K8s) for long-lived workers and websockets. Keep model calls behind a gateway for routing, fallbacks, and key rotation.</li>
+          <li style="margin-bottom:6px;"><strong style="color:#06b6d4;">Logging:</strong> Structured JSON logs: <em>request_id, user_id, model, tool_name, latency, tokens, error_code</em>. Store prompts/results with PII redaction; retain per compliance needs.</li>
+          <li style="margin-bottom:6px;"><strong style="color:#8b5cf6;">Traces:</strong> OpenTelemetry spans for each model + tool call. Visualize slow steps and failed chains—optimize what you measure.</li>
+          <li style="margin-bottom:0;"><strong style="color:#a5b4fc;">Error handling:</strong> Classify: retryable (429, 5xx with backoff) vs. fatal (schema mismatch). Return safe user messages; <strong>never</strong> leak stack traces or secrets. Circuit-break persistently failing tools.</li>
+        </ul>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:rgba(59,130,246,0.1);">
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#7dd3fc;">Signal</th>
+              <th style="text-align:left;padding:8px 10px;border:1px solid rgba(71,85,105,0.4);color:#7dd3fc;">Why it matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;">Token &amp; cost / request</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Detect prompt bloat, runaway tool loops, and model drift after upgrades.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;">Tool failure rate</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Flag upstream API issues or bad schemas before users churn.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;">Human override rate</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">High rate means unclear UX or over-trusted automation—tune policies and prompts.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;">Qualitative / eval scores</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">LLM-as-judge or rubrics in CI to catch regressions on golden prompts when models update.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#e2e8f0;">Queue depth &amp; p95 latency</td>
+              <td style="padding:8px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Surface overload early; add concurrency caps per tenant before providers throttle you.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;font-size:12px;color:#94a3b8;"><strong style="color:#06b6d4;">SLOs:</strong> Set separate targets for <em>interactive</em> (e.g. first token 500ms) vs. <em>background</em> jobs. Alert on SLO burn with multi-window detectors to avoid flappy pages.</p>
+        <p style="margin:8px 0 0;font-size:12px;color:#cbd5e1;">Kill switches: per-tool disable in config; global &quot;model off&quot; for incidents; feature flags for prompt versions so rollback is a toggle, not a deploy.</p>
+      </div>
+    </section>
+
+    <!-- Glossary -->
+    <section style="margin-bottom:28px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(59,130,246,0.2) 0%,rgba(139,92,246,0.25) 100%);border:1px solid rgba(59,130,246,0.25);">Reference: Core Terms</h2>
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(100,116,139,0.25);border-radius:8px;padding:14px 16px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <tbody>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;width:28%;">System prompt</td>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Stable instructions, persona bounds, and safety rules. Version in git; avoid stuffing secrets (they can leak in errors).</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;">Tool / function</td>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Named capability with a schema. Your code executes; the model only proposes invocations—<strong>you</strong> are the security boundary.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;">Stop sequences</td>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Tokens that halt generation. Rare in modern tool APIs, but still useful in raw text pipelines.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;">Temperature</td>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Lower for structured tools and JSON; higher for brainstorm-only steps. Some stacks fix temperature per step.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;">Context rot</td>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Quality drop as the window fills with tool noise. Mitigate: summarize, drop redundant observations, and reset state.</td>
+            </tr>
+            <tr style="background:rgba(30,41,59,0.4);">
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;">Eval harness</td>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Repeatable test cases: expected tool calls, no forbidden tools, and answer checks. Run nightly or in CI for prompt PRs.</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#7dd3fc;vertical-align:top;">PII &amp; data residency</td>
+              <td style="padding:6px 10px;border:1px solid rgba(71,85,105,0.35);color:#cbd5e1;">Classify data before it hits the model. Route regulated workloads to region-pinned providers and log minimization.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Quick checklist -->
+    <section style="margin-bottom:32px;">
+      <h2 style="margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.02em;color:#f8fafc;background:linear-gradient(90deg,rgba(59,130,246,0.25) 0%,rgba(139,92,246,0.3) 100%);border:1px solid rgba(59,130,246,0.28);">Production Readiness — Quick Checklist</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+        <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(6,182,212,0.2);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#06b6d4;margin-bottom:6px;">Design</div>
+          <ul style="margin:0;padding-left:16px;font-size:12px;color:#cbd5e1;">
+            <li style="margin-bottom:4px;">Clear success + stop conditions</li>
+            <li style="margin-bottom:4px;">Tool schemas reviewed</li>
+            <li>Least-privilege credentials</li>
+          </ul>
+        </div>
+        <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#3b82f6;margin-bottom:6px;">Safety</div>
+          <ul style="margin:0;padding-left:16px;font-size:12px;color:#cbd5e1;">
+            <li style="margin-bottom:4px;">Input / output guardrails</li>
+            <li style="margin-bottom:4px;">PII &amp; secret handling</li>
+            <li>Human gates on irreversible actions</li>
+          </ul>
+        </div>
+        <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#a78bfa;margin-bottom:6px;">Ops</div>
+          <ul style="margin:0;padding-left:16px;font-size:12px;color:#cbd5e1;">
+            <li style="margin-bottom:4px;">Dashboards for cost &amp; errors</li>
+            <li style="margin-bottom:4px;">Runbooks for incidents</li>
+            <li>Version prompts &amp; model pins</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer style="margin-top:8px;padding-top:20px;border-top:1px solid rgba(100,116,139,0.3);text-align:center;font-size:11px;color:#64748b;">
+      <div style="font-weight:700;background:linear-gradient(90deg,#3b82f6,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;">SkillsXAI</div>
+      <div>AI Agents Cheat Sheet &middot; For educational use &middot; <span class="no-print">Use Print / Save PDF for a crisp copy.</span></div>
+    </footer>
+  </div>
+</body>
+</html>

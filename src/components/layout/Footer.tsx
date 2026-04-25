@@ -46,7 +46,7 @@ const socialLinks = [
 
 export default function Footer() {
   const pathname = usePathname()
-  if (pathname.startsWith('/masterclass')) return null
+  if (pathname.startsWith('/masterclass') || pathname.startsWith('/certification') || pathname.startsWith('/certificatedownload')) return null
   return (
     <footer className="relative mt-20 border-t border-primary-500/20">
       {/* Gradient overlay */}

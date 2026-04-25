@@ -58,7 +58,7 @@ export default function Chatbot() {
 
   useEffect(() => { scrollToBottom() }, [messages, scrollToBottom])
 
-  if (pathname.startsWith('/masterclass')) return null
+  if (pathname.startsWith('/masterclass') || pathname.startsWith('/certification') || pathname.startsWith('/certificatedownload')) return null
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
