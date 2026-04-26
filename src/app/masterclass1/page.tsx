@@ -23,6 +23,7 @@ import {
   AlertCircle,
   Copy,
   Smartphone,
+  Clock,
 } from 'lucide-react'
 
 // ─── Shared SVG constants for certificate ────────────────────────────────────
@@ -541,7 +542,7 @@ function RewardsStep({
 }) {
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('pro')
   const [paidPlan, setPaidPlan] = useState<PlanType | null>(null)
-  const [payState, setPayState] = useState<'idle' | 'verifying' | 'success'>('idle')
+  const [payState, setPayState] = useState<'idle' | 'verifying' | 'pending' | 'success'>('idle')
   const [utrInput, setUtrInput] = useState('')
   const [utrError, setUtrError] = useState('')
   const [verifyLoading, setVerifyLoading] = useState(false)
@@ -624,11 +625,15 @@ function RewardsStep({
       })
       const data = await res.json()
 
-      if (data.verified || data.status === 'PENDING_MANUAL') {
+      if (data.verified) {
         await saveCertToDb()
         setPaidPlan(selectedPlan)
         setPayState('success')
-        setVerifyMessage(data.message || 'Payment recorded! Certificate and resources have been sent to your email.')
+        setVerifyMessage(data.message || 'Payment verified! Certificate and resources have been sent to your email.')
+      } else if (data.status === 'PENDING_MANUAL') {
+        setPaidPlan(selectedPlan)
+        setPayState('pending')
+        setVerifyMessage(data.message || 'Payment submitted! You will receive your certificate and resources on your email once verified.')
       } else if (data.status === 'PENDING') {
         setVerifyMessage(data.message || 'Payment is still processing. Please wait and try again.')
       } else if (data.status === 'DUPLICATE_UTR') {
@@ -684,8 +689,8 @@ function RewardsStep({
         </p>
       </div>
 
-      {/* ── Plan Selection ── */}
-      <div className="grid md:grid-cols-2 gap-4">
+      {/* ── Plan Selection (hidden when pending/success) ── */}
+      {payState !== 'pending' && payState !== 'success' && <div className="grid md:grid-cols-2 gap-4">
         {/* Pro Plan — ₹199 */}
         <button
           onClick={() => handlePlanSelect('pro')}
@@ -749,10 +754,10 @@ function RewardsStep({
             <p className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" /> 20% Discount on Full Courses</p>
           </div>
         </button>
-      </div>
+      </div>}
 
-      {/* PRO PACKAGE DETAILS */}
-      <div className="relative rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-[#1a1200]/60 via-[#0f172a] to-[#10063a]/60 p-8 shadow-[0_0_80px_rgba(212,175,55,0.08)] overflow-hidden">
+      {/* PRO PACKAGE DETAILS (hidden when pending/success) */}
+      {payState !== 'pending' && payState !== 'success' && <div className="relative rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-[#1a1200]/60 via-[#0f172a] to-[#10063a]/60 p-8 shadow-[0_0_80px_rgba(212,175,55,0.08)] overflow-hidden">
         {/* Glow */}
         <div className="absolute inset-0 bg-gradient-to-br from-yellow-600/3 via-purple-600/3 to-transparent pointer-events-none rounded-3xl" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-yellow-500/5 to-transparent rounded-3xl pointer-events-none" />
@@ -1015,21 +1020,113 @@ function RewardsStep({
               </button>
             </motion.div>
           )}
+        </div>
+      </div>}
 
-          {/* Step 3: Everything unlocked */}
-          {payState === 'success' && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="space-y-5"
-            >
-              <div className="text-center py-4">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.4)]">
-                  <CheckCircle2 className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-xl font-bold text-white mb-1">{currentPlan.label} Unlocked!</h4>
-                <p className="text-gray-400 text-sm">Everything is yours. Download your resources below.</p>
+      {/* Step 3a: Payment under review */}
+      {payState === 'pending' && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="space-y-5"
+        >
+          <div className="text-center py-6">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center shadow-[0_0_30px_rgba(234,179,8,0.3)]">
+              <Clock className="w-8 h-8 text-white" />
+            </div>
+            <h4 className="text-xl font-bold text-white mb-2">Payment Under Review</h4>
+            <p className="text-gray-400 text-sm max-w-xs mx-auto">
+              Your payment of <span className="text-white font-bold">₹{currentPlan.amount}</span> has been submitted successfully.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-yellow-500/20 bg-yellow-500/5 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Mail className="w-4 h-4 text-yellow-400" />
               </div>
+              <div>
+                <p className="text-sm font-bold text-white">Certificate & resources will be emailed</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Once we verify your payment, your certificate and all resources will be sent to <span className="text-blue-300">{userData.email}</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Clock className="w-4 h-4 text-yellow-400" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-white">Usually verified within a few hours</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Our team reviews payments quickly. You&apos;ll receive an email with everything once approved.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-2">
+            <p className="text-xs text-gray-500">Payment details submitted</p>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400">UPI Reference ID</span>
+              <span className="text-sm font-mono text-white">{utrInput}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400">Package</span>
+              <span className="text-sm text-purple-300 font-semibold">{currentPlan.label}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400">Amount</span>
+              <span className="text-sm text-white font-bold">₹{currentPlan.amount}</span>
+            </div>
+          </div>
+
+          <div className="text-center space-y-3">
+            <p className="text-xs text-gray-500">
+              You&apos;ll receive the following on <span className="text-white">{userData.email}</span> after verification:
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              <span className="px-2.5 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-[10px] font-medium">Certificate</span>
+              <span className="px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-[10px] font-medium">Claude AI Cheat Sheet</span>
+              <span className="px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-[10px] font-medium">AI APIs Guide</span>
+              <span className="px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-300 text-[10px] font-medium">Career Roadmap 2026</span>
+              {selectedPlan === 'ultimate' && (
+                <span className="px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-medium">AI Agent Masterclass Sheet</span>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-4 rounded-xl border border-green-500/15 bg-green-500/5 text-center">
+              <Phone className="w-5 h-5 text-green-400 mx-auto mb-2" />
+              <p className="text-xs font-bold text-white mb-1">Free Career Counselling</p>
+              <p className="text-[10px] text-gray-500 mb-2">We&apos;ll call you within 48 hours</p>
+              <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-bold">SCHEDULED</span>
+            </div>
+            <div className="p-4 rounded-xl border border-blue-500/15 bg-blue-500/5 text-center">
+              <Bot className="w-5 h-5 text-blue-400 mx-auto mb-2" />
+              <p className="text-xs font-bold text-white mb-1">AI Agents Masterclass</p>
+              <p className="text-[10px] text-gray-500 mb-2">Recording sent to your email</p>
+              <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold">SENDING</span>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Step 3b: Everything unlocked (after admin verification) */}
+      {payState === 'success' && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="space-y-5"
+        >
+          <div className="text-center py-4">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.4)]">
+              <CheckCircle2 className="w-8 h-8 text-white" />
+            </div>
+            <h4 className="text-xl font-bold text-white mb-1">{currentPlan.label} Unlocked!</h4>
+            <p className="text-gray-400 text-sm">Everything is yours. Download your resources below.</p>
+          </div>
 
               {/* Certificate Preview */}
               <div className="rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-orange-500/5 p-5 text-center">
@@ -1160,10 +1257,8 @@ function RewardsStep({
               <p className="text-center text-xs text-gray-500">
                 Open any HTML file in browser → Print → Save as PDF.
               </p>
-            </motion.div>
-          )}
-        </div>
-      </div>
+        </motion.div>
+      )}
 
       {/* Back */}
       <button

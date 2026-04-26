@@ -177,3 +177,6 @@ ALTER TABLE masterclass_payments ADD COLUMN IF NOT EXISTS course TEXT NOT NULL D
 ALTER TABLE masterclass_certificates ADD COLUMN IF NOT EXISTS course TEXT NOT NULL DEFAULT 'ai-masterclass';
 CREATE INDEX IF NOT EXISTS idx_masterclass_reg_course ON masterclass_registrations(course);
 CREATE INDEX IF NOT EXISTS idx_masterclass_cert_course ON masterclass_certificates(course);
+
+-- Add plan column for two-tier pricing (pro / ultimate)
+ALTER TABLE masterclass_payments ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'pro';
