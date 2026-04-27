@@ -16,6 +16,11 @@ import {
   ChevronUp,
   RefreshCw,
   Filter,
+  Send,
+  Trash2,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react'
 
 type Tab = 'registrations' | 'payments' | 'certificates'
@@ -57,6 +62,25 @@ interface Certificate {
   skills: string[]
   course: string
   cert_url: string | null
+}
+
+interface SortConfig {
+  key: string
+  dir: 'asc' | 'desc'
+}
+
+function SortHeader({ label, sortKey, current, onSort }: { label: string; sortKey: string; current: SortConfig; onSort: (key: string) => void }) {
+  const active = current.key === sortKey
+  return (
+    <button onClick={() => onSort(sortKey)} className="flex items-center gap-1 group text-left">
+      <span>{label}</span>
+      {active ? (
+        current.dir === 'asc' ? <ArrowUp className="w-3 h-3 text-purple-400" /> : <ArrowDown className="w-3 h-3 text-purple-400" />
+      ) : (
+        <ArrowUpDown className="w-3 h-3 text-gray-600 group-hover:text-gray-400 transition-colors" />
+      )}
+    </button>
+  )
 }
 
 function Stars({ count }: { count: number | null }) {
@@ -125,6 +149,12 @@ export default function MasterclassDashboard() {
   const [refreshing, setRefreshing] = useState(false)
   const [newPaymentIds, setNewPaymentIds] = useState<Set<string>>(new Set())
   const seenPaymentIds = useRef<Set<string>>(new Set())
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [bulkLoading, setBulkLoading] = useState(false)
+  const [sort, setSort] = useState<SortConfig>({ key: 'created_at', dir: 'desc' })
+  const [regStatusFilter, setRegStatusFilter] = useState<'all' | 'verified' | 'pending' | 'none'>('all')
+  const [payStatusFilter, setPayStatusFilter] = useState<'all' | 'verified' | 'pending' | 'rejected'>('all')
+  const [certCourseFilter, setCertCourseFilter] = useState<string>('all')
 
   const fetchDashboardData = useCallback(async (silent = false) => {
     if (!keyInput.trim()) return
@@ -207,6 +237,91 @@ export default function MasterclassDashboard() {
     }
   }
 
+  const handleSendEmail = async (paymentId: string, name: string, email: string, plan: string) => {
+    setActionLoading(`${paymentId}-email`)
+    try {
+      const res = await fetch('/api/masterclass/dashboard', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: keyInput, paymentId, name, email, plan: plan || 'pro' }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setActionMessage({ id: paymentId, text: `Certificate & resources emailed to ${email}` })
+        setTimeout(() => setActionMessage(null), 5000)
+      } else {
+        setActionMessage({ id: paymentId, text: data.error || 'Failed to send email' })
+        setTimeout(() => setActionMessage(null), 5000)
+      }
+    } catch {
+      setActionMessage({ id: paymentId, text: 'Failed to send email' })
+      setTimeout(() => setActionMessage(null), 5000)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleDelete = async (table: 'registrations' | 'payments' | 'certificates', id: string) => {
+    if (!confirm(`Are you sure you want to delete this ${table.slice(0, -1)}? This cannot be undone.`)) return
+    setActionLoading(`${id}-delete`)
+    try {
+      const res = await fetch('/api/masterclass/dashboard', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: keyInput, table, id }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        if (table === 'registrations') setRegistrations((prev) => prev.filter((r) => r.id !== id))
+        if (table === 'payments') setPayments((prev) => prev.filter((p) => p.id !== id))
+        if (table === 'certificates') setCertificates((prev) => prev.filter((c) => c.id !== id))
+      }
+    } catch {
+      /* silent */
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next })
+  }
+
+  const toggleSelectAll = (ids: string[]) => {
+    const allSelected = ids.every((id) => selected.has(id))
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (allSelected) { ids.forEach((id) => next.delete(id)) } else { ids.forEach((id) => next.add(id)) }
+      return next
+    })
+  }
+
+  const handleBulkDelete = async (table: 'registrations' | 'payments' | 'certificates') => {
+    const ids = Array.from(selected)
+    if (ids.length === 0) return
+    if (!confirm(`Delete ${ids.length} ${table}? This cannot be undone.`)) return
+    setBulkLoading(true)
+    try {
+      const res = await fetch('/api/masterclass/dashboard', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: keyInput, table, ids }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        const deletedSet = new Set(ids)
+        if (table === 'registrations') setRegistrations((prev) => prev.filter((r) => !deletedSet.has(r.id)))
+        if (table === 'payments') setPayments((prev) => prev.filter((p) => !deletedSet.has(p.id)))
+        if (table === 'certificates') setCertificates((prev) => prev.filter((c) => !deletedSet.has(c.id)))
+        setSelected(new Set())
+      }
+    } catch {
+      /* silent */
+    } finally {
+      setBulkLoading(false)
+    }
+  }
+
   const handleLogin = async () => {
     if (!keyInput.trim()) {
       setAuthError('Enter the admin key')
@@ -239,17 +354,44 @@ export default function MasterclassDashboard() {
     }
   }
 
+  const handleSort = (key: string) => {
+    setSort((prev) => prev.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' })
+  }
+
+  function sortRows<T>(rows: T[]): T[] {
+    const { key, dir } = sort
+    return [...rows].sort((a, b) => {
+      const av = (a as Record<string, unknown>)[key]
+      const bv = (b as Record<string, unknown>)[key]
+      if (av == null && bv == null) return 0
+      if (av == null) return 1
+      if (bv == null) return -1
+      if (typeof av === 'number' && typeof bv === 'number') return dir === 'asc' ? av - bv : bv - av
+      const as = String(av).toLowerCase()
+      const bs = String(bv).toLowerCase()
+      return dir === 'asc' ? as.localeCompare(bs) : bs.localeCompare(as)
+    })
+  }
+
   const q = search.toLowerCase()
-  const filteredRegistrations = registrations.filter(
-    (r) => r.name?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q) || r.phone?.includes(q)
-  )
-  const filteredPayments = payments.filter((r) => {
+  const filteredRegistrations = sortRows(registrations.filter((r) => {
+    if (regStatusFilter === 'verified' && r.payment_status !== 'verified') return false
+    if (regStatusFilter === 'pending' && !['PENDING_MANUAL', 'pending'].includes(r.payment_status)) return false
+    if (regStatusFilter === 'none' && r.payment_status && ['verified', 'PENDING_MANUAL', 'pending'].includes(r.payment_status)) return false
+    return r.name?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q) || r.phone?.includes(q)
+  }))
+  const filteredPayments = sortRows(payments.filter((r) => {
     if (planFilter !== 'all' && r.plan && r.plan !== planFilter) return false
+    if (payStatusFilter === 'verified' && !r.verified) return false
+    if (payStatusFilter === 'pending' && (r.verified || r.paytm_status === 'REJECTED')) return false
+    if (payStatusFilter === 'rejected' && r.paytm_status !== 'REJECTED') return false
     return r.name?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q) || r.utr?.includes(q) || r.order_id?.includes(q)
-  })
-  const filteredCertificates = certificates.filter(
-    (r) => r.name?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q) || r.id?.includes(q)
-  )
+  }))
+  const uniqueCourses = Array.from(new Set(certificates.map((c) => c.course).filter(Boolean)))
+  const filteredCertificates = sortRows(certificates.filter((r) => {
+    if (certCourseFilter !== 'all' && r.course !== certCourseFilter) return false
+    return r.name?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q) || r.id?.includes(q)
+  }))
 
   const tabs: { id: Tab; label: string; icon: typeof Users; count: number }[] = [
     { id: 'registrations', label: 'Registrations', icon: Users, count: registrations.length },
@@ -372,7 +514,7 @@ export default function MasterclassDashboard() {
               return (
                 <button
                   key={t.id}
-                  onClick={() => setTab(t.id)}
+                  onClick={() => { setTab(t.id); setSelected(new Set()); setSort({ key: 'created_at', dir: 'desc' }) }}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     tab === t.id
                       ? 'bg-gradient-to-r from-blue-600/80 to-purple-600/80 text-white shadow'
@@ -396,29 +538,95 @@ export default function MasterclassDashboard() {
             })}
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            {tab === 'payments' && (
+          <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
+            {tab === 'registrations' && (
               <div className="flex items-center gap-1 rounded-lg bg-white/[0.03] border border-white/10 p-0.5">
                 <Filter className="w-3 h-3 text-gray-500 ml-2 mr-1" />
-                {(['all', 'pro', 'ultimate'] as const).map((f) => (
+                {(['all', 'verified', 'pending', 'none'] as const).map((f) => (
                   <button
                     key={f}
-                    onClick={() => setPlanFilter(f)}
+                    onClick={() => setRegStatusFilter(f)}
                     className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
-                      planFilter === f
-                        ? f === 'ultimate'
-                          ? 'bg-purple-600/80 text-white'
-                          : f === 'pro'
-                            ? 'bg-yellow-600/80 text-white'
-                            : 'bg-white/15 text-white'
+                      regStatusFilter === f
+                        ? f === 'verified' ? 'bg-green-600/80 text-white'
+                          : f === 'pending' ? 'bg-yellow-600/80 text-white'
+                          : f === 'none' ? 'bg-gray-600/80 text-white'
+                          : 'bg-white/15 text-white'
                         : 'text-gray-500 hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    {f === 'all' ? 'All' : f === 'pro' ? 'Pro' : 'Ultimate'}
+                    {f === 'all' ? 'All' : f === 'verified' ? 'Verified' : f === 'pending' ? 'Pending' : 'No Payment'}
                   </button>
                 ))}
               </div>
             )}
+
+            {tab === 'payments' && (
+              <>
+                <div className="flex items-center gap-1 rounded-lg bg-white/[0.03] border border-white/10 p-0.5">
+                  <Filter className="w-3 h-3 text-gray-500 ml-2 mr-1" />
+                  {(['all', 'pro', 'ultimate'] as const).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setPlanFilter(f)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                        planFilter === f
+                          ? f === 'ultimate' ? 'bg-purple-600/80 text-white'
+                            : f === 'pro' ? 'bg-yellow-600/80 text-white'
+                            : 'bg-white/15 text-white'
+                          : 'text-gray-500 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      {f === 'all' ? 'All Plans' : f === 'pro' ? 'Pro' : 'Ultimate'}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1 rounded-lg bg-white/[0.03] border border-white/10 p-0.5">
+                  {(['all', 'verified', 'pending', 'rejected'] as const).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setPayStatusFilter(f)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                        payStatusFilter === f
+                          ? f === 'verified' ? 'bg-green-600/80 text-white'
+                            : f === 'pending' ? 'bg-yellow-600/80 text-white'
+                            : f === 'rejected' ? 'bg-red-600/80 text-white'
+                            : 'bg-white/15 text-white'
+                          : 'text-gray-500 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      {f === 'all' ? 'All Status' : f.charAt(0).toUpperCase() + f.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {tab === 'certificates' && uniqueCourses.length > 1 && (
+              <div className="flex items-center gap-1 rounded-lg bg-white/[0.03] border border-white/10 p-0.5">
+                <Filter className="w-3 h-3 text-gray-500 ml-2 mr-1" />
+                <button
+                  onClick={() => setCertCourseFilter('all')}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                    certCourseFilter === 'all' ? 'bg-white/15 text-white' : 'text-gray-500 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  All
+                </button>
+                {uniqueCourses.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCertCourseFilter(c)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                      certCourseFilter === c ? 'bg-purple-600/80 text-white' : 'text-gray-500 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="relative flex-1 sm:w-72">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
@@ -432,6 +640,27 @@ export default function MasterclassDashboard() {
           </div>
         </div>
 
+        {/* Bulk Action Bar */}
+        {selected.size > 0 && (
+          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/5 border border-red-500/20">
+            <span className="text-sm text-white font-semibold">{selected.size} selected</span>
+            <button
+              onClick={() => handleBulkDelete(tab)}
+              disabled={bulkLoading}
+              className="px-4 py-2 rounded-lg bg-red-600/20 border border-red-500/30 text-red-400 text-xs font-semibold hover:bg-red-600/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
+            >
+              {bulkLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+              Delete Selected
+            </button>
+            <button
+              onClick={() => setSelected(new Set())}
+              className="px-3 py-2 rounded-lg text-gray-400 text-xs font-medium hover:text-white hover:bg-white/5 transition-all"
+            >
+              Clear
+            </button>
+          </div>
+        )}
+
         {/* Registrations Tab */}
         {tab === 'registrations' && (
           <div className="rounded-xl border border-white/10 overflow-hidden">
@@ -439,19 +668,29 @@ export default function MasterclassDashboard() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-white/[0.03] text-gray-400 text-xs uppercase tracking-wider">
-                    <th className="text-left px-4 py-3 font-medium">Name</th>
-                    <th className="text-left px-4 py-3 font-medium">Email</th>
-                    <th className="text-left px-4 py-3 font-medium">Phone</th>
-                    <th className="text-left px-4 py-3 font-medium">Ratings</th>
-                    <th className="text-left px-4 py-3 font-medium">Payment</th>
-                    <th className="text-left px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 w-10">
+                      <input type="checkbox" className="rounded border-gray-600 bg-transparent accent-purple-500 cursor-pointer"
+                        checked={filteredRegistrations.length > 0 && filteredRegistrations.every((r) => selected.has(r.id))}
+                        onChange={() => toggleSelectAll(filteredRegistrations.map((r) => r.id))} />
+                    </th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Name" sortKey="name" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Email" sortKey="email" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Phone" sortKey="phone" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Ratings" sortKey="overall_rating" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Payment" sortKey="payment_status" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Date" sortKey="created_at" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium w-10"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filteredRegistrations.length === 0 ? (
-                    <tr><td colSpan={6} className="text-center py-12 text-gray-500">No registrations found</td></tr>
+                    <tr><td colSpan={8} className="text-center py-12 text-gray-500">No registrations found</td></tr>
                   ) : filteredRegistrations.map((r) => (
-                    <tr key={r.id} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={r.id} className={`hover:bg-white/[0.02] transition-colors ${selected.has(r.id) ? 'bg-purple-500/[0.06]' : ''}`}>
+                      <td className="px-4 py-3">
+                        <input type="checkbox" className="rounded border-gray-600 bg-transparent accent-purple-500 cursor-pointer"
+                          checked={selected.has(r.id)} onChange={() => toggleSelect(r.id)} />
+                      </td>
                       <td className="px-4 py-3 font-medium text-white">{r.name}</td>
                       <td className="px-4 py-3 text-gray-300">{r.email}</td>
                       <td className="px-4 py-3 text-gray-400 font-mono text-xs">{r.phone}</td>
@@ -475,6 +714,16 @@ export default function MasterclassDashboard() {
                         <StatusBadge status={r.payment_status} verified={r.payment_status === 'verified'} />
                       </td>
                       <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(r.created_at)}</td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => handleDelete('registrations', r.id)}
+                          disabled={actionLoading === `${r.id}-delete`}
+                          className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-50"
+                          title="Delete registration"
+                        >
+                          {actionLoading === `${r.id}-delete` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -490,26 +739,31 @@ export default function MasterclassDashboard() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-white/[0.03] text-gray-400 text-xs uppercase tracking-wider">
-                    <th className="text-left px-4 py-3 font-medium">Name</th>
-                    <th className="text-left px-4 py-3 font-medium">Email</th>
-                    <th className="text-left px-4 py-3 font-medium">Phone</th>
-                    <th className="text-left px-4 py-3 font-medium">UPI Ref ID</th>
-                    <th className="text-left px-4 py-3 font-medium">Amount</th>
-                    <th className="text-left px-4 py-3 font-medium">Plan</th>
-                    <th className="text-left px-4 py-3 font-medium">Status</th>
-                    <th className="text-left px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 w-10">
+                      <input type="checkbox" className="rounded border-gray-600 bg-transparent accent-purple-500 cursor-pointer"
+                        checked={filteredPayments.length > 0 && filteredPayments.every((p) => selected.has(p.id))}
+                        onChange={() => toggleSelectAll(filteredPayments.map((p) => p.id))} />
+                    </th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Name" sortKey="name" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Email" sortKey="email" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Phone" sortKey="phone" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="UPI Ref ID" sortKey="utr" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Amount" sortKey="amount" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Plan" sortKey="plan" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Status" sortKey="paytm_status" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Date" sortKey="created_at" current={sort} onSort={handleSort} /></th>
                     <th className="text-left px-4 py-3 font-medium w-8"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filteredPayments.length === 0 ? (
-                    <tr><td colSpan={9} className="text-center py-12 text-gray-500">No payments found</td></tr>
+                    <tr><td colSpan={10} className="text-center py-12 text-gray-500">No payments found</td></tr>
                   ) : filteredPayments.map((p) => (
                     <>
                       <tr
                         key={p.id}
                         className={`hover:bg-white/[0.02] transition-colors cursor-pointer ${
-                          newPaymentIds.has(p.id) ? 'bg-green-500/[0.06] animate-pulse' : ''
+                          selected.has(p.id) ? 'bg-purple-500/[0.06]' : newPaymentIds.has(p.id) ? 'bg-green-500/[0.06] animate-pulse' : ''
                         }`}
                         onClick={() => {
                           setExpandedRow(expandedRow === p.id ? null : p.id)
@@ -518,6 +772,10 @@ export default function MasterclassDashboard() {
                           }
                         }}
                       >
+                        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <input type="checkbox" className="rounded border-gray-600 bg-transparent accent-purple-500 cursor-pointer"
+                            checked={selected.has(p.id)} onChange={() => toggleSelect(p.id)} />
+                        </td>
                         <td className="px-4 py-3 font-medium text-white">{p.name}</td>
                         <td className="px-4 py-3 text-gray-300">{p.email}</td>
                         <td className="px-4 py-3 text-gray-400 font-mono text-xs">{p.phone}</td>
@@ -542,7 +800,7 @@ export default function MasterclassDashboard() {
                       </tr>
                       {expandedRow === p.id && (
                         <tr key={`${p.id}-detail`} className="bg-white/[0.01]">
-                          <td colSpan={9} className="px-6 py-4">
+                          <td colSpan={10} className="px-6 py-4">
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs mb-4">
                               <div>
                                 <p className="text-gray-500 mb-1">Order ID</p>
@@ -565,15 +823,25 @@ export default function MasterclassDashboard() {
                             {/* Admin Actions */}
                             <div className="flex items-center gap-3 pt-3 border-t border-white/5">
                               {p.verified ? (
-                                <div className="flex-1 space-y-1">
-                                  <div className="flex items-center gap-2 text-green-400 text-xs font-medium">
-                                    <CheckCircle2 className="w-4 h-4" />
-                                    Payment verified {p.verified_at ? `on ${formatDate(p.verified_at)}` : ''}
+                                <>
+                                  <div className="flex-1 space-y-1">
+                                    <div className="flex items-center gap-2 text-green-400 text-xs font-medium">
+                                      <CheckCircle2 className="w-4 h-4" />
+                                      Payment verified {p.verified_at ? `on ${formatDate(p.verified_at)}` : ''}
+                                    </div>
+                                    {actionMessage?.id === p.id && (
+                                      <p className="text-[11px] text-emerald-400/80 pl-6">{actionMessage.text}</p>
+                                    )}
                                   </div>
-                                  {actionMessage?.id === p.id && (
-                                    <p className="text-[11px] text-emerald-400/80 pl-6">{actionMessage.text}</p>
-                                  )}
-                                </div>
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handleSendEmail(p.id, p.name, p.email, p.plan || 'pro') }}
+                                    disabled={actionLoading === `${p.id}-email`}
+                                    className="px-4 py-2 rounded-lg bg-blue-600/20 border border-blue-500/30 text-blue-400 text-xs font-semibold hover:bg-blue-600/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                  >
+                                    {actionLoading === `${p.id}-email` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                    Send Email
+                                  </button>
+                                </>
                               ) : p.paytm_status === 'REJECTED' ? (
                                 <>
                                   <div className="flex items-center gap-2 text-red-400 text-xs font-medium">
@@ -583,10 +851,18 @@ export default function MasterclassDashboard() {
                                   <button
                                     onClick={(e) => { e.stopPropagation(); handleVerifyPayment(p.id, 'verify') }}
                                     disabled={actionLoading === `${p.id}-verify`}
-                                    className="ml-auto px-4 py-2 rounded-lg bg-green-600/20 border border-green-500/30 text-green-400 text-xs font-semibold hover:bg-green-600/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                    className="px-4 py-2 rounded-lg bg-green-600/20 border border-green-500/30 text-green-400 text-xs font-semibold hover:bg-green-600/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
                                   >
                                     {actionLoading === `${p.id}-verify` ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
                                     Verify Instead
+                                  </button>
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handleSendEmail(p.id, p.name, p.email, p.plan || 'pro') }}
+                                    disabled={actionLoading === `${p.id}-email`}
+                                    className="ml-auto px-4 py-2 rounded-lg bg-blue-600/20 border border-blue-500/30 text-blue-400 text-xs font-semibold hover:bg-blue-600/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                  >
+                                    {actionLoading === `${p.id}-email` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                    Send Email
                                   </button>
                                 </>
                               ) : (
@@ -607,9 +883,27 @@ export default function MasterclassDashboard() {
                                     {actionLoading === `${p.id}-reject` ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
                                     Reject
                                   </button>
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handleSendEmail(p.id, p.name, p.email, p.plan || 'pro') }}
+                                    disabled={actionLoading === `${p.id}-email`}
+                                    className="px-4 py-2 rounded-lg bg-blue-600/20 border border-blue-500/30 text-blue-400 text-xs font-semibold hover:bg-blue-600/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                  >
+                                    {actionLoading === `${p.id}-email` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                    Send Email
+                                  </button>
                                   <span className="ml-auto text-[10px] text-gray-600">UPI Ref: {p.utr} · ₹{p.amount}</span>
                                 </>
                               )}
+                            </div>
+                            <div className="flex items-center justify-end pt-3 mt-3 border-t border-white/5">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDelete('payments', p.id) }}
+                                disabled={actionLoading === `${p.id}-delete`}
+                                className="px-3 py-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-50 flex items-center gap-1.5 text-[11px]"
+                              >
+                                {actionLoading === `${p.id}-delete` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                                Delete Payment
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -629,20 +923,30 @@ export default function MasterclassDashboard() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-white/[0.03] text-gray-400 text-xs uppercase tracking-wider">
-                    <th className="text-left px-4 py-3 font-medium">Certificate ID</th>
-                    <th className="text-left px-4 py-3 font-medium">Name</th>
-                    <th className="text-left px-4 py-3 font-medium">Email</th>
-                    <th className="text-left px-4 py-3 font-medium">Course</th>
+                    <th className="px-4 py-3 w-10">
+                      <input type="checkbox" className="rounded border-gray-600 bg-transparent accent-purple-500 cursor-pointer"
+                        checked={filteredCertificates.length > 0 && filteredCertificates.every((c) => selected.has(c.id))}
+                        onChange={() => toggleSelectAll(filteredCertificates.map((c) => c.id))} />
+                    </th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Cert ID" sortKey="id" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Name" sortKey="name" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Email" sortKey="email" current={sort} onSort={handleSort} /></th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Course" sortKey="course" current={sort} onSort={handleSort} /></th>
                     <th className="text-left px-4 py-3 font-medium">Skills</th>
-                    <th className="text-left px-4 py-3 font-medium">Issued</th>
+                    <th className="text-left px-4 py-3 font-medium"><SortHeader label="Issued" sortKey="issued_at" current={sort} onSort={handleSort} /></th>
                     <th className="text-left px-4 py-3 font-medium">Link</th>
+                    <th className="text-left px-4 py-3 font-medium w-10"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filteredCertificates.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center py-12 text-gray-500">No certificates found</td></tr>
+                    <tr><td colSpan={9} className="text-center py-12 text-gray-500">No certificates found</td></tr>
                   ) : filteredCertificates.map((c) => (
-                    <tr key={c.id} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={c.id} className={`hover:bg-white/[0.02] transition-colors ${selected.has(c.id) ? 'bg-purple-500/[0.06]' : ''}`}>
+                      <td className="px-4 py-3">
+                        <input type="checkbox" className="rounded border-gray-600 bg-transparent accent-purple-500 cursor-pointer"
+                          checked={selected.has(c.id)} onChange={() => toggleSelect(c.id)} />
+                      </td>
                       <td className="px-4 py-3 font-mono text-xs text-purple-300 max-w-[120px] truncate">{c.id}</td>
                       <td className="px-4 py-3 font-medium text-white">{c.name}</td>
                       <td className="px-4 py-3 text-gray-300">{c.email}</td>
@@ -668,6 +972,16 @@ export default function MasterclassDashboard() {
                             View <ExternalLink className="w-3 h-3" />
                           </a>
                         )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => handleDelete('certificates', c.id)}
+                          disabled={actionLoading === `${c.id}-delete`}
+                          className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-50"
+                          title="Delete certificate"
+                        >
+                          {actionLoading === `${c.id}-delete` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                        </button>
                       </td>
                     </tr>
                   ))}

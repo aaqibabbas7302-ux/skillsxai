@@ -4,14 +4,15 @@ import { readFile } from 'fs/promises'
 import { join } from 'path'
 import { getNeonPool, saveCertToNeon } from '@/lib/neon'
 import { generateCertHTML, generateEmailHTML } from '@/lib/certificate'
+import { sendMail } from '@/lib/email'
+import { htmlToPdf, htmlFileToPdf } from '@/lib/pdf'
 
 const ADMIN_KEY = process.env.ADMIN_DASHBOARD_KEY || 'skillsxai2026'
-const RESEND_API_KEY = process.env.RESEND_API_KEY
 
 const BASE_RESOURCES = [
-  { filename: 'Claude-AI-Cheat-Sheet.html', srcFile: 'claude-ai-cheatsheet.html', contentType: 'text/html' },
-  { filename: 'Free-AI-APIs-NVIDIA-Guide.html', srcFile: 'free-ai-apis-guide.html', contentType: 'text/html' },
-  { filename: 'AI-Career-Roadmap-2026.html', srcFile: 'ai-career-roadmap-2026.html', contentType: 'text/html' },
+  { filename: 'Claude-AI-Cheat-Sheet.pdf', srcFile: 'claude-ai-cheatsheet.html', contentType: 'application/pdf' },
+  { filename: 'Free-AI-APIs-NVIDIA-Guide.pdf', srcFile: 'free-ai-apis-guide.html', contentType: 'application/pdf' },
+  { filename: 'AI-Career-Roadmap-2026.pdf', srcFile: 'ai-career-roadmap-2026.html', contentType: 'application/pdf' },
 ] as const
 
 const ULTIMATE_RESOURCE = { filename: 'AI-Agent-Masterclass-Sheet.csv', srcFile: 'Ai Agent Masterclass Sheet - Sheet1.csv', contentType: 'text/csv' } as const
@@ -138,10 +139,75 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
+export async function DELETE(req: NextRequest) {
+  try {
+    const { key, table, id, ids } = await req.json()
+
+    if (!key || typeof key !== 'string' || key !== ADMIN_KEY) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const deleteIds: string[] = ids && Array.isArray(ids) ? ids : id ? [id] : []
+    if (deleteIds.length === 0) {
+      return NextResponse.json({ error: 'id or ids is required' }, { status: 400 })
+    }
+
+    const allowed = ['registrations', 'payments', 'certificates'] as const
+    if (!allowed.includes(table)) {
+      return NextResponse.json({ error: 'Invalid table' }, { status: 400 })
+    }
+
+    if (table === 'certificates') {
+      const neonPool = getNeonPool()
+      if (!neonPool) return NextResponse.json({ error: 'Neon DB not configured' }, { status: 500 })
+      const placeholders = deleteIds.map((_, i) => `$${i + 1}`).join(', ')
+      await neonPool.query(`DELETE FROM certificates WHERE id IN (${placeholders})`, deleteIds)
+    } else {
+      const supabase = getSupabaseClient()
+      if (!supabase) return NextResponse.json({ error: 'Database not configured' }, { status: 500 })
+
+      const supabaseTable = table === 'registrations' ? 'masterclass_registrations' : 'masterclass_payments'
+      const { error } = await supabase.from(supabaseTable).delete().in('id', deleteIds)
+      if (error) {
+        console.error('Delete error:', error)
+        return NextResponse.json({ error: 'Failed to delete' }, { status: 500 })
+      }
+    }
+
+    return NextResponse.json({ success: true, message: `Deleted ${deleteIds.length} from ${table}`, count: deleteIds.length })
+  } catch (err) {
+    console.error('DELETE error:', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { key, name, email, plan } = await req.json()
+
+    if (!key || typeof key !== 'string' || key !== ADMIN_KEY) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!name || !email) {
+      return NextResponse.json({ error: 'name and email are required' }, { status: 400 })
+    }
+
+    await sendCertificateFromAdmin(name, email, plan || 'pro')
+
+    return NextResponse.json({
+      success: true,
+      message: `Certificate and resources sent to ${email}`,
+    })
+  } catch (err) {
+    console.error('PUT /api/masterclass/dashboard error:', err)
+    const msg = err instanceof Error ? err.message : 'Failed to send email'
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
+}
+
 async function sendCertificateFromAdmin(name: string, email: string, plan: string) {
-  if (!RESEND_API_KEY || !name || !email) return
-  const { Resend } = await import('resend')
-  const resend = new Resend(RESEND_API_KEY)
+  if (!name || !email) throw new Error('name and email are required')
 
   const saved = await saveCertToNeon(name, email, 'ai-masterclass', MC_SKILLS)
   const certId = saved?.certId || `SKX-MC-${Date.now().toString(36).toUpperCase()}`
@@ -152,27 +218,34 @@ async function sendCertificateFromAdmin(name: string, email: string, plan: strin
   const certHtml = generateCertHTML(name, certId, dateStr)
   const emailHtml = generateEmailHTML(name, certId, dateStr, certUrl)
 
+  const certPdf = await htmlToPdf(certHtml, true)
+
   const resourceList = isUltimate ? [...BASE_RESOURCES, ULTIMATE_RESOURCE] : [...BASE_RESOURCES]
   const downloadsDir = join(process.cwd(), 'public', 'downloads')
-  const resourceAttachments: { filename: string; content: Buffer; contentType: string }[] = []
+  const attachments: { filename: string; content: Buffer; contentType: string }[] = [
+    { filename: `SkillsXAI-Certificate-${name.replace(/\s+/g, '-')}.pdf`, content: certPdf, contentType: 'application/pdf' },
+  ]
   for (const res of resourceList) {
     try {
-      const content = await readFile(join(downloadsDir, res.srcFile))
-      resourceAttachments.push({ filename: res.filename, content, contentType: res.contentType })
-    } catch {
-      // Skip missing files
+      const fileContent = await readFile(join(downloadsDir, res.srcFile))
+      if (res.srcFile.endsWith('.html')) {
+        const pdfContent = await htmlFileToPdf(fileContent)
+        attachments.push({ filename: res.filename, content: pdfContent, contentType: 'application/pdf' })
+      } else {
+        attachments.push({ filename: res.filename, content: fileContent, contentType: res.contentType })
+      }
+    } catch (e) {
+      console.error(`Failed to process resource ${res.srcFile}:`, e)
     }
   }
 
   const planLabel = isUltimate ? 'Ultimate Package' : 'Pro Package'
-  await resend.emails.send({
-    from: 'SkillsXAI <certificates@team.skillsxai.com>',
+  const result = await sendMail({
     to: email,
     subject: `Your AI Masterclass ${planLabel} — Certificate + Resources | ${name}`,
     html: emailHtml,
-    attachments: [
-      { filename: `SkillsXAI-Certificate-${name.replace(/\s+/g, '-')}.html`, content: Buffer.from(certHtml, 'utf-8'), contentType: 'text/html' },
-      ...resourceAttachments,
-    ],
+    attachments,
   })
+
+  console.log('Email sent successfully to', email, 'messageId:', result.messageId)
 }

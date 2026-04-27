@@ -1096,6 +1096,43 @@ function RewardsStep({
             </div>
           </div>
 
+          {/* Spam folder notice */}
+          <div className="p-4 rounded-xl border border-orange-500/20 bg-orange-500/5">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <AlertCircle className="w-4 h-4 text-orange-400" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-white">Check your Spam / Junk folder</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Sometimes our emails land in Spam. If you don&apos;t see the email in your inbox, please check your Spam or Junk folder and mark it as &quot;Not Spam&quot;.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* LinkedIn guide */}
+          <div className="p-4 rounded-xl border border-[#0a66c2]/20 bg-[#0a66c2]/5">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#0a66c2]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="#0a66c2">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-white mb-1.5">How to add your certificate to LinkedIn</p>
+                <div className="space-y-1 text-[11px] text-gray-400">
+                  <p className="flex items-start gap-2"><span className="text-[#0a66c2] font-bold mt-px">1.</span> Open LinkedIn → <span className="text-white font-medium">Profile</span> → <span className="text-white font-medium">Add section</span> → <span className="text-white font-medium">Licenses & certifications</span></p>
+                  <p className="flex items-start gap-2"><span className="text-[#0a66c2] font-bold mt-px">2.</span> Name: <span className="text-blue-300">AI Masterclass Certification — SkillsXAI</span></p>
+                  <p className="flex items-start gap-2"><span className="text-[#0a66c2] font-bold mt-px">3.</span> Issuing organization: <span className="text-blue-300">SkillsXAI</span></p>
+                  <p className="flex items-start gap-2"><span className="text-[#0a66c2] font-bold mt-px">4.</span> Click <span className="text-white font-medium">&quot;+ Add skill&quot;</span> → type <span className="text-blue-300">Artificial Intelligence</span>, <span className="text-blue-300">Prompt Engineering</span>, <span className="text-blue-300">AI Agents</span></p>
+                  <p className="flex items-start gap-2"><span className="text-[#0a66c2] font-bold mt-px">5.</span> Click <span className="text-white font-medium">&quot;+ Add media&quot;</span> → upload the certificate PDF from your email</p>
+                  <p className="flex items-start gap-2"><span className="text-[#0a66c2] font-bold mt-px">6.</span> Hit <span className="text-white font-medium">&quot;Save&quot;</span> — done! Your certificate is now on your profile</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div className="p-4 rounded-xl border border-green-500/15 bg-green-500/5 text-center">
               <Phone className="w-5 h-5 text-green-400 mx-auto mb-2" />

@@ -135,6 +135,49 @@ export default async function CertificateDownloadPage({
             </svg>
             Add to LinkedIn Profile
           </a>
+        </div>
+
+        {/* Downloadable Resources */}
+        {cert.course === 'ai-masterclass' && (
+          <div className="mt-8 rounded-2xl border border-white/10 bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              <h3 className="text-sm font-bold text-white">Your Resources</h3>
+            </div>
+            <div className="space-y-2">
+              {[
+                { title: 'Claude AI Cheat Sheet — 50+ Power Prompts', file: 'claude-ai-cheatsheet.html', gradient: 'from-orange-500 to-red-500' },
+                { title: 'Free AI APIs & NVIDIA NIM Guide', file: 'free-ai-apis-guide.html', gradient: 'from-green-500 to-emerald-600' },
+                { title: 'AI Career Roadmap 2026 — India Edition', file: 'ai-career-roadmap-2026.html', gradient: 'from-pink-500 to-purple-600' },
+                { title: 'AI Agent Masterclass Sheet', file: 'Ai Agent Masterclass Sheet - Sheet1.csv', gradient: 'from-blue-500 to-cyan-500' },
+              ].map((doc, i) => (
+                <a
+                  key={i}
+                  href={`/downloads/${doc.file}`}
+                  download={doc.title}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/15 transition-all group"
+                >
+                  <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${doc.gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm text-gray-300 group-hover:text-white transition-colors flex-1">{doc.title}</span>
+                  <svg className="w-4 h-4 text-gray-600 group-hover:text-blue-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+            <p className="text-center text-[10px] text-gray-600 mt-3">
+              Open any HTML file in your browser → Print → Save as PDF
+            </p>
+          </div>
+        )}
+
+        <div className="mt-6 space-y-3">
           <a
             href="https://skillsxai.com/certification"
             className="w-full py-3 rounded-xl border border-white/10 text-gray-300 font-semibold text-sm hover:bg-white/5 transition-all flex items-center justify-center gap-2"
